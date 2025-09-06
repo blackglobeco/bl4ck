@@ -98,8 +98,13 @@
   }
 
   &:not(.connected) {
-    background-color: #22c55e;
-    color: var(--Neutral-5);
+    background-color: white;
+    color: black;
+  }
+
+  &.connected {
+    background-color: white;
+    color: black;
   }
 }
 
@@ -137,7 +142,7 @@
 
     .text-indicator {
       font-size: 11px;
-      color: #22c55e;
+      color: white;
       user-select: none;
     }
 
