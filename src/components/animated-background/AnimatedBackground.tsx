@@ -45,7 +45,7 @@ export const AnimatedBackground: React.FC = () => {
           vy: (Math.random() - 0.5) * 0.3,
           size: Math.random() * 4 + 2,
           opacity: Math.random() * 0.6 + 0.2,
-          hue: Math.random() * 40 + 110, // Green range (110-150)
+          hue: 0, // White particles
         });
       }
       return particles;
@@ -89,9 +89,9 @@ export const AnimatedBackground: React.FC = () => {
           particle.x, particle.y, 0,
           particle.x, particle.y, particle.size * 2
         );
-        nodeGradient.addColorStop(0, `hsla(${particle.hue}, 80%, 70%, ${particle.opacity})`);
-        nodeGradient.addColorStop(0.5, `hsla(${particle.hue}, 70%, 50%, ${particle.opacity * 0.6})`);
-        nodeGradient.addColorStop(1, `hsla(${particle.hue}, 60%, 30%, 0)`);
+        nodeGradient.addColorStop(0, `rgba(255, 255, 255, ${particle.opacity})`);
+        nodeGradient.addColorStop(0.5, `rgba(255, 255, 255, ${particle.opacity * 0.6})`);
+        nodeGradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
         
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size * 2, 0, Math.PI * 2);
@@ -101,7 +101,7 @@ export const AnimatedBackground: React.FC = () => {
         // Draw core node
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${particle.hue}, 90%, 80%, ${particle.opacity})`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
         ctx.fill();
 
         // Draw connections between nearby particles
@@ -120,7 +120,7 @@ export const AnimatedBackground: React.FC = () => {
             ctx.beginPath();
             ctx.moveTo(particle.x, particle.y);
             ctx.lineTo(otherParticle.x, otherParticle.y);
-            ctx.strokeStyle = `hsla(130, 70%, 60%, ${opacity * pulsePhase})`;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * pulsePhase})`;
             ctx.lineWidth = Math.max(1, opacity * 3);
             ctx.stroke();
             
@@ -132,7 +132,7 @@ export const AnimatedBackground: React.FC = () => {
               
               ctx.beginPath();
               ctx.arc(packetX, packetY, 2, 0, Math.PI * 2);
-              ctx.fillStyle = `hsla(120, 100%, 80%, 0.8)`;
+              ctx.fillStyle = `rgba(255, 255, 255, 0.8)`;
               ctx.fill();
             }
           }
@@ -161,8 +161,8 @@ export const AnimatedBackground: React.FC = () => {
         className="animated-background"
       />
       <div className="background-text">
-        <span className="letter-white">BlackHat </span>
-        <span className="letter-green">Ai</span>
+        <span className="letter-white">BlackAI </span>
+        <span className="letter-white">⚛</span>
       </div>
     </div>
   );
