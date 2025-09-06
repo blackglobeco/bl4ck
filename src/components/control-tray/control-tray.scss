@@ -37,11 +37,11 @@
   }
 
   &.connected {
-    background: var(--Blue-800);
-    color: var(--Blue-500);
+    background: #16a34a;
+    color: #22c55e;
 
     &:hover {
-      border: 1px solid var(--Blue-500);
+      border: 1px solid #22c55e;
     }
   }
 }
@@ -98,7 +98,7 @@
   }
 
   &:not(.connected) {
-    background-color: var(--Blue-500);
+    background-color: #22c55e;
     color: var(--Neutral-5);
   }
 }
@@ -137,7 +137,7 @@
 
     .text-indicator {
       font-size: 11px;
-      color: var(--Blue-500);
+      color: #22c55e;
       user-select: none;
     }
 
