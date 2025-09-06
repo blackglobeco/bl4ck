@@ -27,21 +27,25 @@
   text-align: center;
   z-index: 1;
   pointer-events: none;
-  
+
   /* Mobile responsive */
   @media (max-width: 768px) {
     font-size: 2.8rem;
   }
-  
+
   @media (max-width: 480px) {
     font-size: 2.2rem;
   }
-  
+
   .letter-white {
     color: white;
   }
-  
+
   .letter-blue {
-    color: #4A9EFF;
+    color: #4285f4;
+  }
+
+  .letter-green {
+    color: #22c55e;
   }
 }
