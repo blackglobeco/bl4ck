@@ -23,6 +23,7 @@ import ControlTray from "./components/control-tray/ControlTray";
 import { AnimatedBackground } from "./components/animated-background/AnimatedBackground";
 import { MapWidget } from "./components/map-widget/MapWidget";
 import { YouTubeWidget } from "./components/youtube-widget/YouTubeWidget";
+import { CyberThreatMapWidget } from "./components/cyber-threat-map/CyberThreatMapWidget";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -48,6 +49,17 @@ function App() {
   // youtube widget state
   const [showYouTubeWidget, setShowYouTubeWidget] = useState<boolean>(false);
   const [youTubeQuery, setYouTubeQuery] = useState<string>("");
+  // cyber threat map widget state
+  const [showCyberThreatWidget, setShowCyberThreatWidget] = useState<boolean>(false);
+
+  // Close all widgets function to ensure clean state
+  const closeAllWidgets = () => {
+    setShowMapWidget(false);
+    setShowYouTubeWidget(false);
+    setShowCyberThreatWidget(false);
+    setMapLocation('');
+    setYouTubeQuery('');
+  };
 
 
   return (
@@ -60,12 +72,24 @@ function App() {
               {/* APP goes here */}
               <Altair 
                 onShowMap={(location) => {
-                  setMapLocation(location);
-                  setShowMapWidget(true);
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setMapLocation(location);
+                    setShowMapWidget(true);
+                  }, 100);
                 }}
                 onSearchYouTube={(query) => {
-                  setYouTubeQuery(query);
-                  setShowYouTubeWidget(true);
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setYouTubeQuery(query);
+                    setShowYouTubeWidget(true);
+                  }, 100);
+                }}
+                onShowCyberThreatMap={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowCyberThreatWidget(true);
+                  }, 100);
                 }}
               />
               <video
@@ -92,17 +116,20 @@ function App() {
         {showMapWidget && (
           <MapWidget 
             location={mapLocation}
-            onClose={() => {
-              setShowMapWidget(false);
-              setMapLocation('');
-            }}
+            onClose={closeAllWidgets}
           />
         )}
 
         {showYouTubeWidget && (
           <YouTubeWidget 
             searchQuery={youTubeQuery}
-            onClose={() => setShowYouTubeWidget(false)}
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showCyberThreatWidget && (
+          <CyberThreatMapWidget 
+            onClose={closeAllWidgets}
           />
         )}
 
