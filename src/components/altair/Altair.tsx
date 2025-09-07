@@ -130,6 +130,21 @@ const searchNewsDeclaration: FunctionDeclaration = {
   }
 };
 
+const webCheckDeclaration: FunctionDeclaration = {
+  name: "run_web_check",
+  description: "Run a comprehensive web check analysis for any website using web-check.xyz",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      domain: {
+        type: Type.STRING,
+        description: "The domain or website URL to analyze (e.g., 'instagram.com', 'google.com', 'example.org')"
+      }
+    },
+    required: ["domain"]
+  }
+};
+
 function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
@@ -206,7 +221,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [cyberThreatMapDeclaration] },
         { functionDeclarations: [openWebsiteDeclaration] },
         { functionDeclarations: [searchWebsiteDeclaration] },
-        { functionDeclarations: [searchNewsDeclaration] }
+        { functionDeclarations: [searchNewsDeclaration] },
+        { functionDeclarations: [webCheckDeclaration] }
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -364,6 +380,22 @@ In order to ask Black AI a question, the user must give the prompt in the conver
             } catch (error) {
                 console.error(`Failed to open Google News search for "${query}"`, error);
             }
+        } else if (fc.name === webCheckDeclaration.name) {
+            const domain = (fc.args as any).domain;
+            console.log(`Web check requested for: ${domain}`);
+            
+            // Clean the domain (remove protocol if present)
+            const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+            
+            // Build web-check.xyz URL
+            const webCheckUrl = `https://web-check.xyz/check/${cleanDomain}`;
+            
+            try {
+                window.open(webCheckUrl, '_blank', 'noopener,noreferrer');
+                console.log(`Successfully opened web check for "${cleanDomain}"`);
+            } catch (error) {
+                console.error(`Failed to open web check for "${cleanDomain}"`, error);
+            }
         }
       });
 
@@ -387,6 +419,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Searching for "${(fc.args as any).query}" on ${(fc.args as any).website} and opening results in a new tab.`
                       : fc.name === searchNewsDeclaration.name
                       ? `Opening Google News search results for "${(fc.args as any).query}" in a new tab.`
+                      : fc.name === webCheckDeclaration.name
+                      ? `Running web check analysis for "${(fc.args as any).domain}" and opening results in a new tab.`
                       : "Function executed successfully"
                   }
                 },
