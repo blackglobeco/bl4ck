@@ -22,6 +22,7 @@ import { getCurrentLocation, LocationData, LocationError } from "../../lib/locat
 interface AltairProps {
   onShowMap: (location: string) => void;
   onSearchYouTube: (query: string) => void;
+  onShowCyberThreatMap: () => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -70,6 +71,16 @@ const youtubeDeclaration: FunctionDeclaration = {
   }
 };
 
+const cyberThreatMapDeclaration: FunctionDeclaration = {
+  name: "show_cyber_threat_map",
+  description: "Open a popup widget that displays the Cyber Threat Map",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
 const openWebsiteDeclaration: FunctionDeclaration = {
   name: "open_website",
   description: "Open any website in a new browser tab when user asks to open, visit, or go to a website",
@@ -104,7 +115,7 @@ const searchWebsiteDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowMap, onSearchYouTube }: AltairProps) {
+function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -129,7 +140,7 @@ function AltairComponent({ onShowMap, onSearchYouTube }: AltairProps) {
   useEffect(() => {
     // Get user's timezone or fallback to system timezone
     let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    
+
     // If we have location, we could potentially get more precise timezone
     // For now, use the browser's detected timezone
     const currentDate = new Date().toLocaleString('en-US', {
@@ -166,16 +177,20 @@ In order to ask Black AI a question, the user must give the prompt in the conver
             text: `The application is attempting to retrieve the user's location for traffic and location-based services. When users ask about date and time, provide the current date and time based on their detected timezone: ${timeZone}. Current date and time: ${currentDate}. If location access is denied or unavailable, still provide date/time using the browser's detected timezone.`
           },
           {
-            text: location ? 
+            text: location ?
               `User's location: Latitude ${location.latitude}, Longitude ${location.longitude} (accuracy: ${location.accuracy}m)` :
               `Location access ${locationError ? 'denied or unavailable' : 'pending'}. Use browser's detected timezone for date/time queries.`
           }
         ],
       },
       tools: [
-          { googleSearch: {} },
-          { functionDeclarations: [altairDeclaration, mapDeclaration, youtubeDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration] },
-        ],
+        { functionDeclarations: [altairDeclaration] },
+        { functionDeclarations: [mapDeclaration] },
+        { functionDeclarations: [youtubeDeclaration] },
+        { functionDeclarations: [cyberThreatMapDeclaration] },
+        { functionDeclarations: [openWebsiteDeclaration] },
+        { functionDeclarations: [searchWebsiteDeclaration] }
+      ],
     });
   }, [setConfig, setModel, location, locationError]);
 
@@ -199,7 +214,11 @@ In order to ask Black AI a question, the user must give the prompt in the conver
           console.log(`YouTube search requested: ${query}`);
 
           onSearchYouTube(query);
-        } else if (fc.name === openWebsiteDeclaration.name) {
+        } else if (fc.name === cyberThreatMapDeclaration.name) {
+          console.log(`Cyber Threat Map requested`);
+          onShowCyberThreatMap();
+        }
+         else if (fc.name === openWebsiteDeclaration.name) {
           const url = (fc.args as any).url;
           let formattedUrl = url;
 
@@ -231,15 +250,6 @@ In order to ask Black AI a question, the user must give the prompt in the conver
               break;
             case 'amazon':
               searchUrl = `https://www.amazon.com/s?k=${encodedQuery}`;
-              break;
-            case 'shopee':
-              searchUrl = `https://shopee.com.my/search?keyword=${encodedQuery}`;
-              break;
-            case 'lazada':
-              searchUrl = `https://www.lazada.com.my/tag/${encodedQuery}/?spm=a2o4k.homepage.search.d_go&q=${encodedQuery}&catalog_redirect_tag=true`;
-              break;
-            case 'carousell':
-              searchUrl = `https://www.carousell.com.my/search/${encodedQuery}`;
               break;
             case 'ebay':
               searchUrl = `https://www.ebay.com/sch/i.html?_nkw=${encodedQuery}`;
@@ -307,10 +317,6 @@ In order to ask Black AI a question, the user must give the prompt in the conver
             case 'google news':
               searchUrl = `https://news.google.com/search?q=${encodedQuery}`;
               break;
-            case 'maps':
-            case 'google maps':
-              searchUrl = `https://www.google.com/maps/search/${encodedQuery}`;
-              break;
             case 'images':
             case 'google images':
               searchUrl = `https://www.google.com/search?q=${encodedQuery}&tbm=isch`;
@@ -338,19 +344,21 @@ In order to ask Black AI a question, the user must give the prompt in the conver
           () =>
             client.sendToolResponse({
               functionResponses: toolCall.functionCalls?.map((fc) => ({
-                response: { 
-                  output: { 
+                response: {
+                  output: {
                     success: true,
                     message: fc.name === mapDeclaration.name
                       ? `Map widget displayed for ${(fc.args as any).location}.`
                       : fc.name === youtubeDeclaration.name
                       ? `YouTube search widget displayed for "${(fc.args as any).query}".`
+                      : fc.name === cyberThreatMapDeclaration.name
+                      ? `Cyber Threat Map widget opened.`
                       : fc.name === openWebsiteDeclaration.name
                       ? `Opening ${ (fc.args as any).url } in a new tab.`
                       : fc.name === searchWebsiteDeclaration.name
                       ? `Searching for "${(fc.args as any).query}" on ${(fc.args as any).website} and opening results in a new tab.`
                       : "Function executed successfully"
-                  } 
+                  }
                 },
                 id: fc.id,
                 name: fc.name,
@@ -364,7 +372,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onSearchYouTube]);
+  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
