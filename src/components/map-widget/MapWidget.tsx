@@ -27,6 +27,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isHidden, setIsHidden] = useState<boolean>(false);
+  const [trafficEnabled, setTrafficEnabled] = useState<boolean>(true);
 
   useEffect(() => {
     if (isWebView()) {
@@ -53,12 +54,19 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
 <body>
   <div id="map"></div>
   <script>
+    let map;
+    let trafficLayer;
+    
     function initMap() {
-      const map = new google.maps.Map(document.getElementById('map'), {
+      map = new google.maps.Map(document.getElementById('map'), {
         zoom: 15,
         center: { lat: 3.1319, lng: 101.6958 },
         mapTypeId: 'roadmap'
       });
+
+      // Initialize traffic layer
+      trafficLayer = new google.maps.TrafficLayer();
+      trafficLayer.setMap(map);
 
       // Apply dark mode styling
       map.setOptions({
@@ -155,6 +163,15 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
           });
         }
       });
+
+      // Refresh traffic data every 2 minutes
+      setInterval(function() {
+        if (trafficLayer) {
+          trafficLayer.setMap(null);
+          trafficLayer = new google.maps.TrafficLayer();
+          trafficLayer.setMap(map);
+        }
+      }, 120000); // 2 minutes
     }
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'demo-key'}&callback=initMap&libraries=geometry"></script>
@@ -187,6 +204,17 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
     };
 
     loadMapData();
+
+    // Set up auto-refresh for traffic data every 2 minutes
+    const refreshInterval = setInterval(() => {
+      if (mapData && !loading) {
+        loadMapData();
+      }
+    }, 120000); // 2 minutes
+
+    return () => {
+      clearInterval(refreshInterval);
+    };
   }, [location]);
 
   if (isHidden) return null;
