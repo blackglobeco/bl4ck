@@ -24,6 +24,7 @@ import { AnimatedBackground } from "./components/animated-background/AnimatedBac
 import { MapWidget } from "./components/map-widget/MapWidget";
 import { YouTubeWidget } from "./components/youtube-widget/YouTubeWidget";
 import { CyberThreatMapWidget } from "./components/cyber-threat-map/CyberThreatMapWidget";
+import { EmailSpooferWidget } from "./components/email-spoofer-widget/EmailSpooferWidget";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -51,12 +52,15 @@ function App() {
   const [youTubeQuery, setYouTubeQuery] = useState<string>("");
   // cyber threat map widget state
   const [showCyberThreatWidget, setShowCyberThreatWidget] = useState<boolean>(false);
+  // email spoofer widget state
+  const [showEmailSpooferWidget, setShowEmailSpooferWidget] = useState<boolean>(false);
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
     setShowMapWidget(false);
     setShowYouTubeWidget(false);
     setShowCyberThreatWidget(false);
+    setShowEmailSpooferWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -89,6 +93,12 @@ function App() {
                   closeAllWidgets();
                   setTimeout(() => {
                     setShowCyberThreatWidget(true);
+                  }, 100);
+                }}
+                onShowEmailSpoofer={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowEmailSpooferWidget(true);
                   }, 100);
                 }}
               />
@@ -129,6 +139,12 @@ function App() {
 
         {showCyberThreatWidget && (
           <CyberThreatMapWidget 
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showEmailSpooferWidget && (
+          <EmailSpooferWidget 
             onClose={closeAllWidgets}
           />
         )}
