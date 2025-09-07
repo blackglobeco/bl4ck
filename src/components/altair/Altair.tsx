@@ -23,6 +23,7 @@ interface AltairProps {
   onShowMap: (location: string) => void;
   onSearchYouTube: (query: string) => void;
   onShowCyberThreatMap: () => void;
+  onShowEmailSpoofer: () => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -71,9 +72,19 @@ const youtubeDeclaration: FunctionDeclaration = {
   }
 };
 
-const cyberThreatMapDeclaration: FunctionDeclaration = {
+const cyberThreatDeclaration: FunctionDeclaration = {
   name: "show_cyber_threat_map",
-  description: "Open a popup widget that displays the Cyber Threat Map",
+  description: "Display a live cyber threat map showing real-time cyber attacks worldwide",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
+const emailSpooferDeclaration: FunctionDeclaration = {
+  name: "show_email_spoofer",
+  description: "Display an email spoofer tool when user asks to send spoofed emails or open email spoofer",
   parameters: {
     type: Type.OBJECT,
     properties: {},
@@ -145,7 +156,7 @@ const webCheckDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap }: AltairProps) {
+function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -218,7 +229,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [altairDeclaration] },
         { functionDeclarations: [mapDeclaration] },
         { functionDeclarations: [youtubeDeclaration] },
-        { functionDeclarations: [cyberThreatMapDeclaration] },
+        { functionDeclarations: [cyberThreatDeclaration] },
+        { functionDeclarations: [emailSpooferDeclaration] },
         { functionDeclarations: [openWebsiteDeclaration] },
         { functionDeclarations: [searchWebsiteDeclaration] },
         { functionDeclarations: [searchNewsDeclaration] },
@@ -234,24 +246,29 @@ In order to ask Black AI a question, the user must give the prompt in the conver
       }
 
       toolCall.functionCalls.forEach((fc) => {
-        if (fc.name === altairDeclaration.name) {
+        const { name } = fc;
+
+        if (name === altairDeclaration.name) {
           const str = (fc.args as any).json_graph;
           setJSONString(str);
-        } else if (fc.name === mapDeclaration.name) {
+        } else if (name === mapDeclaration.name) {
           const location = (fc.args as any).location;
           console.log(`Map requested for: ${location}`);
 
           onShowMap(location);
-        } else if (fc.name === youtubeDeclaration.name) {
+        } else if (name === youtubeDeclaration.name) {
           const query = (fc.args as any).query;
           console.log(`YouTube search requested: ${query}`);
 
           onSearchYouTube(query);
-        } else if (fc.name === cyberThreatMapDeclaration.name) {
+        } else if (name === cyberThreatDeclaration.name) {
           console.log(`Cyber Threat Map requested`);
           onShowCyberThreatMap();
+        } else if (name === emailSpooferDeclaration.name) {
+          console.log(`Email Spoofer requested`);
+          onShowEmailSpoofer();
         }
-         else if (fc.name === openWebsiteDeclaration.name) {
+         else if (name === openWebsiteDeclaration.name) {
           const url = (fc.args as any).url;
           let formattedUrl = url;
 
@@ -269,7 +286,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
           }
 
           console.log(`Opening website requested: ${url}`);
-        } else if (fc.name === searchWebsiteDeclaration.name) {
+        } else if (name === searchWebsiteDeclaration.name) {
           const website = (fc.args as any).website;
           const query = (fc.args as any).query;
 
@@ -369,7 +386,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
           }
 
           console.log(`Search requested: "${query}" on ${website}`);
-        } else if (fc.name === searchNewsDeclaration.name) {
+        } else if (name === searchNewsDeclaration.name) {
             const query = (fc.args as any).query;
             console.log(`News search requested: ${query}`);
             // Directly use Google Search tool for news
@@ -380,16 +397,16 @@ In order to ask Black AI a question, the user must give the prompt in the conver
             } catch (error) {
                 console.error(`Failed to open Google News search for "${query}"`, error);
             }
-        } else if (fc.name === webCheckDeclaration.name) {
+        } else if (name === webCheckDeclaration.name) {
             const domain = (fc.args as any).domain;
             console.log(`Web check requested for: ${domain}`);
-            
+
             // Clean the domain (remove protocol if present)
             const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
-            
+
             // Build web-check.xyz URL
             const webCheckUrl = `https://web-check.xyz/check/${cleanDomain}`;
-            
+
             try {
                 window.open(webCheckUrl, '_blank', 'noopener,noreferrer');
                 console.log(`Successfully opened web check for "${cleanDomain}"`);
@@ -411,8 +428,10 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Map widget displayed for ${(fc.args as any).location}.`
                       : fc.name === youtubeDeclaration.name
                       ? `YouTube search widget displayed for "${(fc.args as any).query}".`
-                      : fc.name === cyberThreatMapDeclaration.name
+                      : fc.name === cyberThreatDeclaration.name
                       ? `Cyber Threat Map widget opened.`
+                      : fc.name === emailSpooferDeclaration.name
+                      ? `Email Spoofer widget opened.`
                       : fc.name === openWebsiteDeclaration.name
                       ? `Opening ${ (fc.args as any).url } in a new tab.`
                       : fc.name === searchWebsiteDeclaration.name
@@ -436,7 +455,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap]);
+  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
