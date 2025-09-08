@@ -328,7 +328,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
               searchUrl = `https://www.facebook.com/${fbUsernameQuery}`;
               break;
             case 'instagram':
-                // Remove spaces and special characters for Facebook username
+                // Remove spaces and special characters for Instagram username
               const igUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9._]/g, '');
               searchUrl = `https://www.instagram.com/${igUsernameQuery}`;
               break;
@@ -359,6 +359,11 @@ In order to ask Black AI a question, the user must give the prompt in the conver
               break;
             case 'soundcloud':
               searchUrl = `https://soundcloud.com/search?q=${encodedQuery}`;
+              break;
+            case 'onlyfans':
+              // Remove spaces and special characters for OnlyFans username
+              const ofUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9._]/g, '');
+              searchUrl = `https://onlyfans.com/${ofUsernameQuery}`;
               break;
             case 'imdb':
               searchUrl = `https://www.imdb.com/find?q=${encodedQuery}`;
