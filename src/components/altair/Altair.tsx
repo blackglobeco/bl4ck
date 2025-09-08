@@ -92,6 +92,16 @@ const emailSpooferDeclaration: FunctionDeclaration = {
   }
 };
 
+const currentLocationDeclaration: FunctionDeclaration = {
+  name: "show_current_location",
+  description: "Show the user's current device location on the map when they ask to see their current location or where they are",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
 const openWebsiteDeclaration: FunctionDeclaration = {
   name: "open_website",
   description: "Open any website in a new browser tab when user asks to open, visit, or go to a website",
@@ -231,6 +241,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [youtubeDeclaration] },
         { functionDeclarations: [cyberThreatDeclaration] },
         { functionDeclarations: [emailSpooferDeclaration] },
+        { functionDeclarations: [currentLocationDeclaration] },
         { functionDeclarations: [openWebsiteDeclaration] },
         { functionDeclarations: [searchWebsiteDeclaration] },
         { functionDeclarations: [searchNewsDeclaration] },
@@ -267,8 +278,19 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === emailSpooferDeclaration.name) {
           console.log(`Email Spoofer requested`);
           onShowEmailSpoofer();
-        }
-         else if (name === openWebsiteDeclaration.name) {
+        } else if (name === currentLocationDeclaration.name) {
+          console.log(`Current location requested`);
+          console.log('Current location data:', location);
+          if (location) {
+            const currentLocationString = `${location.latitude},${location.longitude}`;
+            console.log('Showing map with coordinates:', currentLocationString);
+            onShowMap(currentLocationString);
+          } else {
+            console.warn('Location not available');
+            // Still try to show map widget with a fallback message
+            onShowMap('current-location-unavailable');
+          }
+        } else if (name === openWebsiteDeclaration.name) {
           const url = (fc.args as any).url;
           let formattedUrl = url;
 
@@ -437,6 +459,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Cyber Threat Map widget opened.`
                       : fc.name === emailSpooferDeclaration.name
                       ? `Email Spoofer widget opened.`
+                      : fc.name === currentLocationDeclaration.name
+                      ? `Displaying your current location on the map.`
                       : fc.name === openWebsiteDeclaration.name
                       ? `Opening ${ (fc.args as any).url } in a new tab.`
                       : fc.name === searchWebsiteDeclaration.name
@@ -460,7 +484,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer]);
+  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
