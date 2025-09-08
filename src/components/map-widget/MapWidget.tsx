@@ -152,17 +152,51 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
         ]
       });
 
-      const geocoder = new google.maps.Geocoder();
-      geocoder.geocode({ address: '${location}' }, (results, status) => {
-        if (status === 'OK' && results[0]) {
-          map.setCenter(results[0].geometry.location);
-          const marker = new google.maps.Marker({
-            position: results[0].geometry.location,
-            map: map,
-            title: '${location}'
-          });
-        }
-      });
+      // Check if location is GPS coordinates (lat,lng format) or special case
+      const coordPattern = /^-?\d+\.?\d*,-?\d+\.?\d*$/;
+      if ('${location}' === 'current-location-unavailable') {
+        // Handle case where current location is not available
+        map.setCenter({ lat: 0, lng: 0 });
+        map.setZoom(2); // World view
+        const infoWindow = new google.maps.InfoWindow({
+          content: '<div style="color: #333; padding: 10px;"><strong>Current Location Unavailable</strong><br>Please enable location services or try again.</div>',
+          position: { lat: 0, lng: 0 }
+        });
+        infoWindow.open(map);
+      } else if (coordPattern.test('${location}')) {
+        const [lat, lng] = '${location}'.split(',').map(Number);
+        const position = { lat, lng };
+        map.setCenter(position);
+        map.setZoom(16); // Higher zoom for precise location
+        const marker = new google.maps.Marker({
+          position: position,
+          map: map,
+          title: 'Your Current Location',
+          icon: {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(\`
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="#ffffff" stroke-width="2"/>
+                <circle cx="12" cy="12" r="3" fill="#ffffff"/>
+              </svg>
+            \`),
+            scaledSize: new google.maps.Size(24, 24),
+            anchor: new google.maps.Point(12, 12)
+          }
+        });
+      } else {
+        // Use geocoding for address-based locations
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ address: '${location}' }, (results, status) => {
+          if (status === 'OK' && results[0]) {
+            map.setCenter(results[0].geometry.location);
+            const marker = new google.maps.Marker({
+              position: results[0].geometry.location,
+              map: map,
+              title: '${location}'
+            });
+          }
+        });
+      }
 
       // Refresh traffic data every 2 minutes
       setInterval(function() {
@@ -256,7 +290,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
           <div className="map-title">
             <h2>Map</h2>
             <div className="map-location">
-              {mapData.location}
+              {/^-?\d+\.?\d*,-?\d+\.?\d*$/.test(mapData.location) ? 'Your Current Location' : mapData.location}
               <span className="last-updated">Updated: {mapData.lastUpdated}</span>
             </div>
           </div>
@@ -271,13 +305,13 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
                 className="map-iframe"
                 allowFullScreen
                 loading="lazy"
-                title={`Map for ${mapData.location}`}
+                title={`Map for ${/^-?\d+\.?\d*,-?\d+\.?\d*$/.test(mapData.location) ? 'Your Current Location' : mapData.location}`}
               />
             </div>
           ) : (
             <div className="map-fallback">
               <div className="map-icon">🗺️</div>
-              <p>Map for {mapData.location} is currently unavailable</p>
+              <p>Map for {/^-?\d+\.?\d*,-?\d+\.?\d*$/.test(mapData.location) ? 'your current location' : mapData.location} is currently unavailable</p>
             </div>
           )}
         </div>
