@@ -25,6 +25,7 @@ import { MapWidget } from "./components/map-widget/MapWidget";
 import { YouTubeWidget } from "./components/youtube-widget/YouTubeWidget";
 import { CyberThreatMapWidget } from "./components/cyber-threat-map/CyberThreatMapWidget";
 import { EmailSpooferWidget } from "./components/email-spoofer-widget/EmailSpooferWidget";
+import { CreditCardWidget } from "./components/credit-card-widget/CreditCardWidget";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -54,6 +55,8 @@ function App() {
   const [showCyberThreatWidget, setShowCyberThreatWidget] = useState<boolean>(false);
   // email spoofer widget state
   const [showEmailSpooferWidget, setShowEmailSpooferWidget] = useState<boolean>(false);
+  // credit card widget state
+  const [showCreditCardWidget, setShowCreditCardWidget] = useState<boolean>(false);
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
@@ -61,6 +64,7 @@ function App() {
     setShowYouTubeWidget(false);
     setShowCyberThreatWidget(false);
     setShowEmailSpooferWidget(false);
+    setShowCreditCardWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -99,6 +103,12 @@ function App() {
                   closeAllWidgets();
                   setTimeout(() => {
                     setShowEmailSpooferWidget(true);
+                  }, 100);
+                }}
+                onShowCreditCard={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowCreditCardWidget(true);
                   }, 100);
                 }}
               />
@@ -145,6 +155,12 @@ function App() {
 
         {showEmailSpooferWidget && (
           <EmailSpooferWidget 
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showCreditCardWidget && (
+          <CreditCardWidget 
             onClose={closeAllWidgets}
           />
         )}
