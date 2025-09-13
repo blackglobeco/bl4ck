@@ -24,6 +24,7 @@ interface AltairProps {
   onSearchYouTube: (query: string) => void;
   onShowCyberThreatMap: () => void;
   onShowEmailSpoofer: () => void;
+  onShowCreditCard: () => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -84,7 +85,17 @@ const cyberThreatDeclaration: FunctionDeclaration = {
 
 const emailSpooferDeclaration: FunctionDeclaration = {
   name: "show_email_spoofer",
-  description: "Display an email spoofer tool when user asks to send spoofed emails or open email spoofer",
+  description: "Display an email spoofer tool when user asks about email spoofing, phishing, or testing email security",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
+const creditCardDeclaration: FunctionDeclaration = {
+  name: "generate_credit_card",
+  description: "Generate credit card or bank card details when user asks to create, generate, or get credit card information",
   parameters: {
     type: Type.OBJECT,
     properties: {},
@@ -166,7 +177,7 @@ const webCheckDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer }: AltairProps) {
+function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -241,6 +252,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [youtubeDeclaration] },
         { functionDeclarations: [cyberThreatDeclaration] },
         { functionDeclarations: [emailSpooferDeclaration] },
+        { functionDeclarations: [creditCardDeclaration] },
         { functionDeclarations: [currentLocationDeclaration] },
         { functionDeclarations: [openWebsiteDeclaration] },
         { functionDeclarations: [searchWebsiteDeclaration] },
@@ -278,7 +290,11 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === emailSpooferDeclaration.name) {
           console.log(`Email Spoofer requested`);
           onShowEmailSpoofer();
-        } else if (name === currentLocationDeclaration.name) {
+        } else if (name === creditCardDeclaration.name) {
+          console.log(`Credit Card Generator requested`);
+          onShowCreditCard();
+        }
+        else if (name === currentLocationDeclaration.name) {
           console.log(`Current location requested`);
           console.log('Current location data:', location);
           if (location) {
@@ -459,6 +475,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Cyber Threat Map widget opened.`
                       : fc.name === emailSpooferDeclaration.name
                       ? `Email Spoofer widget opened.`
+                      : fc.name === creditCardDeclaration.name
+                      ? `Credit Card Generator widget opened.`
                       : fc.name === currentLocationDeclaration.name
                       ? `Displaying your current location on the map.`
                       : fc.name === openWebsiteDeclaration.name
@@ -484,7 +502,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, location]);
+  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
