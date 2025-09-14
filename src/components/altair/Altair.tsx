@@ -25,6 +25,7 @@ interface AltairProps {
   onShowCyberThreatMap: () => void;
   onShowEmailSpoofer: () => void;
   onShowCreditCard: () => void;
+  onShowLiveStream: () => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -177,7 +178,17 @@ const webCheckDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard }: AltairProps) {
+const liveStreamDeclaration: FunctionDeclaration = {
+  name: "show_live_stream_player",
+  description: "Display a live stream player for news, IPTV, CCTV, webcam, or IP camera streams when user asks to open or access live streams",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
+function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -257,7 +268,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [openWebsiteDeclaration] },
         { functionDeclarations: [searchWebsiteDeclaration] },
         { functionDeclarations: [searchNewsDeclaration] },
-        { functionDeclarations: [webCheckDeclaration] }
+        { functionDeclarations: [webCheckDeclaration] },
+        { functionDeclarations: [liveStreamDeclaration] }
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -456,6 +468,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
             } catch (error) {
                 console.error(`Failed to open web check for "${cleanDomain}"`, error);
             }
+        } else if (name === liveStreamDeclaration.name) {
+            console.log(`Live Stream Player requested`);
+            onShowLiveStream();
         }
       });
 
@@ -487,6 +502,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Opening Google News search results for "${(fc.args as any).query}" in a new tab.`
                       : fc.name === webCheckDeclaration.name
                       ? `Running web check analysis for "${(fc.args as any).domain}" and opening results in a new tab.`
+                      : fc.name === liveStreamDeclaration.name
+                      ? `Live Stream Player widget opened.`
                       : "Function executed successfully"
                   }
                 },
@@ -502,7 +519,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, location]);
+  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
