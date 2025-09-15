@@ -26,6 +26,7 @@ interface AltairProps {
   onShowEmailSpoofer: () => void;
   onShowCreditCard: () => void;
   onShowLiveStream: () => void;
+  onShowBitcoinPrivkey: () => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -188,7 +189,17 @@ const liveStreamDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream }: AltairProps) {
+const bitcoinPrivkeyDeclaration: FunctionDeclaration = {
+  name: "show_bitcoin_privkey_database",
+  description: "Display Bitcoin Private Keys Database when user asks to access, open, or see Bitcoin private keys database",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
+function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -269,7 +280,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [searchWebsiteDeclaration] },
         { functionDeclarations: [searchNewsDeclaration] },
         { functionDeclarations: [webCheckDeclaration] },
-        { functionDeclarations: [liveStreamDeclaration] }
+        { functionDeclarations: [liveStreamDeclaration] },
+        { functionDeclarations: [bitcoinPrivkeyDeclaration] }
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -471,6 +483,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === liveStreamDeclaration.name) {
             console.log(`Live Stream Player requested`);
             onShowLiveStream();
+        } else if (name === bitcoinPrivkeyDeclaration.name) {
+            console.log(`Bitcoin Private Keys Database requested`);
+            onShowBitcoinPrivkey();
         }
       });
 
@@ -504,6 +519,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Running web check analysis for "${(fc.args as any).domain}" and opening results in a new tab.`
                       : fc.name === liveStreamDeclaration.name
                       ? `Live Stream Player widget opened.`
+                      : fc.name === bitcoinPrivkeyDeclaration.name
+                      ? `Bitcoin Private Keys Database widget opened.`
                       : "Function executed successfully"
                   }
                 },
@@ -519,7 +536,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, location]);
+  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
