@@ -27,6 +27,7 @@ import { CyberThreatMapWidget } from "./components/cyber-threat-map/CyberThreatM
 import { EmailSpooferWidget } from "./components/email-spoofer-widget/EmailSpooferWidget";
 import { CreditCardWidget } from "./components/credit-card-widget/CreditCardWidget";
 import { LiveStreamWidget } from "./components/live-stream-widget/LiveStreamWidget";
+import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -46,6 +47,8 @@ function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
   // either the screen capture, the video or null, if null we hide it
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
+  // lockscreen state
+  const [isLocked, setIsLocked] = useState<boolean>(true);
   // map widget state
   const [showMapWidget, setShowMapWidget] = useState<boolean>(false);
   const [mapLocation, setMapLocation] = useState<string>("");
@@ -73,6 +76,15 @@ function App() {
     setYouTubeQuery('');
   };
 
+  // Handle unlock
+  const handleUnlock = () => {
+    setIsLocked(false);
+  };
+
+  // Show lockscreen if locked
+  if (isLocked) {
+    return <Lockscreen onUnlock={handleUnlock} />;
+  }
 
   return (
     <div className="App">
