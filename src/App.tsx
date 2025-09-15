@@ -27,6 +27,7 @@ import { CyberThreatMapWidget } from "./components/cyber-threat-map/CyberThreatM
 import { EmailSpooferWidget } from "./components/email-spoofer-widget/EmailSpooferWidget";
 import { CreditCardWidget } from "./components/credit-card-widget/CreditCardWidget";
 import { LiveStreamWidget } from "./components/live-stream-widget/LiveStreamWidget";
+import { BitcoinPrivkeyWidget } from "./components/bitcoin-privkey-widget/BitcoinPrivkeyWidget";
 import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -63,6 +64,8 @@ function App() {
   const [showCreditCardWidget, setShowCreditCardWidget] = useState<boolean>(false);
   // live stream widget state
   const [showLiveStreamWidget, setShowLiveStreamWidget] = useState<boolean>(false);
+  // bitcoin privkey widget state
+  const [showBitcoinPrivkeyWidget, setShowBitcoinPrivkeyWidget] = useState<boolean>(false);
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
@@ -72,6 +75,7 @@ function App() {
     setShowEmailSpooferWidget(false);
     setShowCreditCardWidget(false);
     setShowLiveStreamWidget(false);
+    setShowBitcoinPrivkeyWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -133,6 +137,12 @@ function App() {
                     setShowLiveStreamWidget(true);
                   }, 100);
                 }}
+                onShowBitcoinPrivkey={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowBitcoinPrivkeyWidget(true);
+                  }, 100);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -189,6 +199,12 @@ function App() {
 
         {showLiveStreamWidget && (
           <LiveStreamWidget 
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showBitcoinPrivkeyWidget && (
+          <BitcoinPrivkeyWidget 
             onClose={closeAllWidgets}
           />
         )}
