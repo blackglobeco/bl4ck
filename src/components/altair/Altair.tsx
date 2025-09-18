@@ -188,16 +188,6 @@ const liveStreamDeclaration: FunctionDeclaration = {
   }
 };
 
-const osintToolDeclaration: FunctionDeclaration = {
-  name: "open_osint_tool",
-  description: "Open the OSINT investigation tool at osint.rocks when user asks to open OSINT tool or investigate something",
-  parameters: {
-    type: Type.OBJECT,
-    properties: {},
-    required: []
-  }
-};
-
 function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
@@ -279,8 +269,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [searchWebsiteDeclaration] },
         { functionDeclarations: [searchNewsDeclaration] },
         { functionDeclarations: [webCheckDeclaration] },
-        { functionDeclarations: [liveStreamDeclaration] },
-        { functionDeclarations: [osintToolDeclaration] },
+        { functionDeclarations: [liveStreamDeclaration] }
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -482,18 +471,6 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === liveStreamDeclaration.name) {
             console.log(`Live Stream Player requested`);
             onShowLiveStream();
-        } else if (name === osintToolDeclaration.name) {
-          const osintUrl = 'https://osint.rocks/';
-          
-          // Open OSINT tool in new tab
-          try {
-            window.open(osintUrl, '_blank', 'noopener,noreferrer');
-            console.log(`Successfully opened OSINT tool: ${osintUrl}`);
-          } catch (error) {
-            console.error(`Failed to open OSINT tool: ${osintUrl}`, error);
-          }
-
-          console.log(`Opening OSINT tool requested`);
         }
       });
 
@@ -527,8 +504,6 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Running web check analysis for "${(fc.args as any).domain}" and opening results in a new tab.`
                       : fc.name === liveStreamDeclaration.name
                       ? `Live Stream Player widget opened.`
-                      : fc.name === osintToolDeclaration.name
-                      ? `Opening OSINT investigation tool (osint.rocks) in a new tab.`
                       : "Function executed successfully"
                   }
                 },
