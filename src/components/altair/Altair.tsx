@@ -189,6 +189,16 @@ const liveStreamDeclaration: FunctionDeclaration = {
   }
 };
 
+const bitcoinPrivkeyDeclaration: FunctionDeclaration = {
+  name: "show_bitcoin_privkey_widget",
+  description: "Display the Bitcoin Private Key database widget when user asks about Bitcoin private keys, Bitcoin wallet keys, or Bitcoin key generation",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
 function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
@@ -270,7 +280,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [searchWebsiteDeclaration] },
         { functionDeclarations: [searchNewsDeclaration] },
         { functionDeclarations: [webCheckDeclaration] },
-        { functionDeclarations: [liveStreamDeclaration] }
+        { functionDeclarations: [liveStreamDeclaration] },
+        { functionDeclarations: [bitcoinPrivkeyDeclaration] },
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -472,6 +483,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === liveStreamDeclaration.name) {
             console.log(`Live Stream Player requested`);
             onShowLiveStream();
+        } else if (name === "show_bitcoin_privkey_widget") {
+            console.log(`Bitcoin Private Key Widget requested`);
+            onShowBitcoinPrivkey();
         }
       });
 
@@ -505,6 +519,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Running web check analysis for "${(fc.args as any).domain}" and opening results in a new tab.`
                       : fc.name === liveStreamDeclaration.name
                       ? `Live Stream Player widget opened.`
+                      : fc.name === "show_bitcoin_privkey_widget"
+                      ? `Opening Bitcoin Private Key database...`
                       : "Function executed successfully"
                   }
                 },
