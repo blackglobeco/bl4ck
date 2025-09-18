@@ -199,6 +199,16 @@ const bitcoinPrivkeyDeclaration: FunctionDeclaration = {
   }
 };
 
+const osintToolDeclaration: FunctionDeclaration = {
+  name: "open_osint_tool",
+  description: "Open the OSINT (Open Source Intelligence) tool when user asks to open OSINT tool, search for information, or perform OSINT research",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
 function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
@@ -282,6 +292,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [webCheckDeclaration] },
         { functionDeclarations: [liveStreamDeclaration] },
         { functionDeclarations: [bitcoinPrivkeyDeclaration] },
+        { functionDeclarations: [osintToolDeclaration] },
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -486,6 +497,14 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === "show_bitcoin_privkey_widget") {
             console.log(`Bitcoin Private Key Widget requested`);
             onShowBitcoinPrivkey();
+        } else if (name === osintToolDeclaration.name) {
+            console.log(`OSINT Tool requested`);
+            try {
+                window.open('https://osint.rocks/', '_blank', 'noopener,noreferrer');
+                console.log(`Successfully opened OSINT tool`);
+            } catch (error) {
+                console.error(`Failed to open OSINT tool`, error);
+            }
         }
       });
 
@@ -521,6 +540,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Live Stream Player widget opened.`
                       : fc.name === "show_bitcoin_privkey_widget"
                       ? `Opening Bitcoin Private Key database...`
+                      : fc.name === osintToolDeclaration.name
+                      ? `Opening OSINT tool at osint.rocks in a new tab.`
                       : "Function executed successfully"
                   }
                 },
