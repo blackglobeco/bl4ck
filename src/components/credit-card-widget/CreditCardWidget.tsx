@@ -26,7 +26,7 @@ export const CreditCardWidget: React.FC<CreditCardWidgetProps> = ({ onClose }) =
         <div className="credit-card-content">
           <div className="credit-card-container">
             <iframe
-              src="https://black-ccgen.vercel.app/"
+              src="https://itaishek.github.io/CC_Generator/"
               className="credit-card-iframe"
               title="Credit Card Generator Tool"
               allowFullScreen
@@ -45,7 +45,7 @@ export const CreditCardWidget: React.FC<CreditCardWidgetProps> = ({ onClose }) =
               }}
             />
           </div>
-          <p><strong>URL:</strong> https://black-ccgen.vercel.app/</p>
+          <p><strong>URL:</strong>https://itaishek.github.io/CC_Generator/</p>
           <button onClick={openInNewTab}>Open in New Tab</button>
         </div>
       </div>
