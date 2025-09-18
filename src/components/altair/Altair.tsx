@@ -26,7 +26,6 @@ interface AltairProps {
   onShowEmailSpoofer: () => void;
   onShowCreditCard: () => void;
   onShowLiveStream: () => void;
-  onShowBitcoinPrivkey: () => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -189,9 +188,9 @@ const liveStreamDeclaration: FunctionDeclaration = {
   }
 };
 
-const bitcoinPrivkeyDeclaration: FunctionDeclaration = {
-  name: "show_bitcoin_privkey_database",
-  description: "Display Bitcoin Private Keys Database when user asks to access, open, or see Bitcoin private keys database",
+const osintToolDeclaration: FunctionDeclaration = {
+  name: "open_osint_tool",
+  description: "Open the OSINT investigation tool at osint.rocks when user asks to open OSINT tool or investigate something",
   parameters: {
     type: Type.OBJECT,
     properties: {},
@@ -199,7 +198,7 @@ const bitcoinPrivkeyDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey }: AltairProps) {
+function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -281,7 +280,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [searchNewsDeclaration] },
         { functionDeclarations: [webCheckDeclaration] },
         { functionDeclarations: [liveStreamDeclaration] },
-        { functionDeclarations: [bitcoinPrivkeyDeclaration] }
+        { functionDeclarations: [osintToolDeclaration] },
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -483,9 +482,18 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === liveStreamDeclaration.name) {
             console.log(`Live Stream Player requested`);
             onShowLiveStream();
-        } else if (name === bitcoinPrivkeyDeclaration.name) {
-            console.log(`Bitcoin Private Keys Database requested`);
-            onShowBitcoinPrivkey();
+        } else if (name === osintToolDeclaration.name) {
+          const osintUrl = 'https://osint.rocks/';
+          
+          // Open OSINT tool in new tab
+          try {
+            window.open(osintUrl, '_blank', 'noopener,noreferrer');
+            console.log(`Successfully opened OSINT tool: ${osintUrl}`);
+          } catch (error) {
+            console.error(`Failed to open OSINT tool: ${osintUrl}`, error);
+          }
+
+          console.log(`Opening OSINT tool requested`);
         }
       });
 
@@ -519,8 +527,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Running web check analysis for "${(fc.args as any).domain}" and opening results in a new tab.`
                       : fc.name === liveStreamDeclaration.name
                       ? `Live Stream Player widget opened.`
-                      : fc.name === bitcoinPrivkeyDeclaration.name
-                      ? `Bitcoin Private Keys Database widget opened.`
+                      : fc.name === osintToolDeclaration.name
+                      ? `Opening OSINT investigation tool (osint.rocks) in a new tab.`
                       : "Function executed successfully"
                   }
                 },
@@ -536,7 +544,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, location]);
+  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
