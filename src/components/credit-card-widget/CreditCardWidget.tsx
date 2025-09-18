@@ -16,7 +16,7 @@ export const CreditCardWidget: React.FC<CreditCardWidgetProps> = ({ onClose }) =
   };
 
   const openInNewTab = () => {
-    window.open('https://black-ccgen.vercel.app/', '_blank', 'noopener,noreferrer');
+    window.open('https://itaishek.github.io/CC_Generator/', '_blank', 'noopener,noreferrer');
   };
 
   return (
