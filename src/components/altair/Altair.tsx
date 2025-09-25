@@ -21,6 +21,7 @@ import { getCurrentLocation, LocationData, LocationError } from "../../lib/locat
 
 interface AltairProps {
   onShowMap: (location: string) => void;
+  onShowVirtualMap: (location: string) => void; // Added for 3D Virtual Map
   onSearchYouTube: (query: string) => void;
   onShowCyberThreatMap: () => void;
   onShowEmailSpoofer: () => void;
@@ -54,6 +55,22 @@ const mapDeclaration: FunctionDeclaration = {
       location: {
         type: Type.STRING,
         description: "The location to show on the map (e.g., 'Eiffel Tower', 'Tokyo', 'Central Park')"
+      }
+    },
+    required: ["location"]
+  }
+};
+
+// Declaration for the 3D Virtual Map widget
+const virtualMapDeclaration: FunctionDeclaration = {
+  name: "show_virtual_map",
+  description: "Display a 3D virtual map widget for a specific location",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      location: {
+        type: Type.STRING,
+        description: "The location to show on the 3D virtual map (e.g., 'Eiffel Tower', 'Tokyo', 'Central Park')"
       }
     },
     required: ["location"]
@@ -209,7 +226,17 @@ const osintToolDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey }: AltairProps) {
+const currentLocationVirtualMapDeclaration: FunctionDeclaration = {
+  name: "show_current_location_virtual_map",
+  description: "Show the user's current location on the 3D virtual map when they specifically ask to see their current location on virtual map or 3D map",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -281,18 +308,20 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { googleSearch: {} },
         { functionDeclarations: [altairDeclaration] },
         { functionDeclarations: [mapDeclaration] },
+        { functionDeclarations: [virtualMapDeclaration] }, // Added virtual map declaration
         { functionDeclarations: [youtubeDeclaration] },
         { functionDeclarations: [cyberThreatDeclaration] },
         { functionDeclarations: [emailSpooferDeclaration] },
         { functionDeclarations: [creditCardDeclaration] },
+        { functionDeclarations: [liveStreamDeclaration] },
+        { functionDeclarations: [bitcoinPrivkeyDeclaration] },
         { functionDeclarations: [currentLocationDeclaration] },
         { functionDeclarations: [openWebsiteDeclaration] },
         { functionDeclarations: [searchWebsiteDeclaration] },
         { functionDeclarations: [searchNewsDeclaration] },
         { functionDeclarations: [webCheckDeclaration] },
-        { functionDeclarations: [liveStreamDeclaration] },
-        { functionDeclarations: [bitcoinPrivkeyDeclaration] },
         { functionDeclarations: [osintToolDeclaration] },
+        { functionDeclarations: [currentLocationVirtualMapDeclaration] },
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -312,12 +341,31 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === mapDeclaration.name) {
           const location = (fc.args as any).location;
           console.log(`Map requested for: ${location}`);
-
           onShowMap(location);
+        } else if (name === virtualMapDeclaration.name) {
+          const location = (fc.args as any).location;
+          console.log(`3D Virtual Map requested for: ${location}`);
+
+          // Handle current location request for virtual map
+          if (location === 'current' || location.toLowerCase().includes('current location') || location.toLowerCase().includes('my location')) {
+            console.log('Getting current location for virtual map...');
+            getCurrentLocation()
+              .then((locationData) => {
+                const currentLocationString = `${locationData.latitude},${locationData.longitude}`;
+                console.log('Showing virtual map with coordinates:', currentLocationString);
+                onShowVirtualMap(currentLocationString);
+              })
+              .catch((error) => {
+                console.error('Failed to get current location for virtual map:', error);
+                // Still try to show virtual map widget with a fallback message
+                onShowVirtualMap('current-location-unavailable');
+              });
+          } else {
+            onShowVirtualMap(location);
+          }
         } else if (name === youtubeDeclaration.name) {
           const query = (fc.args as any).query;
           console.log(`YouTube search requested: ${query}`);
-
           onSearchYouTube(query);
         } else if (name === cyberThreatDeclaration.name) {
           console.log(`Cyber Threat Map requested`);
@@ -505,6 +553,18 @@ In order to ask Black AI a question, the user must give the prompt in the conver
             } catch (error) {
                 console.error(`Failed to open OSINT tool`, error);
             }
+        } else if (name === currentLocationVirtualMapDeclaration.name) {
+          console.log(`Current location on virtual map requested`);
+          console.log('Current location data:', location);
+          if (location) {
+            const currentLocationString = `${location.latitude},${location.longitude}`;
+            console.log('Showing virtual map with coordinates:', currentLocationString);
+            onShowVirtualMap(currentLocationString);
+          } else {
+            console.warn('Location not available for virtual map');
+            // Still try to show virtual map widget with a fallback message
+            onShowVirtualMap('current-location-unavailable');
+          }
         }
       });
 
@@ -518,6 +578,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                     success: true,
                     message: fc.name === mapDeclaration.name
                       ? `Map widget displayed for ${(fc.args as any).location}.`
+                      : fc.name === virtualMapDeclaration.name
+                      ? `3D Virtual Map widget displayed for ${(fc.args as any).location}.` // Response for 3D Virtual Map
                       : fc.name === youtubeDeclaration.name
                       ? `YouTube search widget displayed for "${(fc.args as any).query}".`
                       : fc.name === cyberThreatDeclaration.name
@@ -542,6 +604,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Opening Bitcoin Private Key database...`
                       : fc.name === osintToolDeclaration.name
                       ? `Opening OSINT tool at osint.rocks in a new tab.`
+                      : fc.name === currentLocationVirtualMapDeclaration.name
+                      ? `Displaying your current location on the 3D virtual map.`
                       : "Function executed successfully"
                   }
                 },
@@ -557,7 +621,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
