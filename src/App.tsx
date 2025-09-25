@@ -22,6 +22,7 @@ import { Altair } from "./components/altair/Altair";
 import ControlTray from "./components/control-tray/ControlTray";
 import { AnimatedBackground } from "./components/animated-background/AnimatedBackground";
 import { MapWidget } from "./components/map-widget/MapWidget";
+import { VirtualMapWidget } from "./components/virtual-map-widget/VirtualMapWidget";
 import { YouTubeWidget } from "./components/youtube-widget/YouTubeWidget";
 import { CyberThreatMapWidget } from "./components/cyber-threat-map/CyberThreatMapWidget";
 import { EmailSpooferWidget } from "./components/email-spoofer-widget/EmailSpooferWidget";
@@ -53,6 +54,9 @@ function App() {
   // map widget state
   const [showMapWidget, setShowMapWidget] = useState<boolean>(false);
   const [mapLocation, setMapLocation] = useState<string>("");
+  // virtual map widget state
+  const [showVirtualMapWidget, setShowVirtualMapWidget] = useState(false);
+  const [virtualMapLocation, setVirtualMapLocation] = useState('');
   // youtube widget state
   const [showYouTubeWidget, setShowYouTubeWidget] = useState<boolean>(false);
   const [youTubeQuery, setYouTubeQuery] = useState<string>("");
@@ -70,6 +74,7 @@ function App() {
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
     setShowMapWidget(false);
+    setShowVirtualMapWidget(false);
     setShowYouTubeWidget(false);
     setShowCyberThreatWidget(false);
     setShowEmailSpooferWidget(false);
@@ -98,12 +103,19 @@ function App() {
           <main>
             <div className="main-app-area">
               {/* APP goes here */}
-              <Altair 
+              <Altair
                 onShowMap={(location) => {
                   closeAllWidgets();
+                  setMapLocation(location);
                   setTimeout(() => {
-                    setMapLocation(location);
                     setShowMapWidget(true);
+                  }, 100);
+                }}
+                onShowVirtualMap={(location) => {
+                  closeAllWidgets();
+                  setVirtualMapLocation(location);
+                  setTimeout(() => {
+                    setShowVirtualMapWidget(true);
                   }, 100);
                 }}
                 onSearchYouTube={(query) => {
@@ -166,45 +178,52 @@ function App() {
         </div>
 
         {showMapWidget && (
-          <MapWidget 
+          <MapWidget
             location={mapLocation}
             onClose={closeAllWidgets}
           />
         )}
 
+        {showVirtualMapWidget && (
+          <VirtualMapWidget
+            location={virtualMapLocation}
+            onClose={closeAllWidgets}
+          />
+        )}
+
         {showYouTubeWidget && (
-          <YouTubeWidget 
+          <YouTubeWidget
             searchQuery={youTubeQuery}
             onClose={closeAllWidgets}
           />
         )}
 
         {showCyberThreatWidget && (
-          <CyberThreatMapWidget 
+          <CyberThreatMapWidget
             onClose={closeAllWidgets}
           />
         )}
 
         {showEmailSpooferWidget && (
-          <EmailSpooferWidget 
+          <EmailSpooferWidget
             onClose={closeAllWidgets}
           />
         )}
 
         {showCreditCardWidget && (
-          <CreditCardWidget 
+          <CreditCardWidget
             onClose={closeAllWidgets}
           />
         )}
 
         {showLiveStreamWidget && (
-          <LiveStreamWidget 
+          <LiveStreamWidget
             onClose={closeAllWidgets}
           />
         )}
 
         {showBitcoinPrivkeyWidget && (
-          <BitcoinPrivkeyWidget 
+          <BitcoinPrivkeyWidget
             onClose={closeAllWidgets}
           />
         )}
