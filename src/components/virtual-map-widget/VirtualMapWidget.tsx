@@ -117,20 +117,8 @@ export const VirtualMapWidget: React.FC<VirtualMapWidgetProps> = ({ location, on
 
   if (isHidden) return null;
 
-  if (loading || !mapData) {
-    return (
-      <div className="virtual-map-backdrop" onClick={onClose}>
-        <div className="virtual-map-widget loading" onClick={(e) => e.stopPropagation()}>
-          <div className="virtual-map-header">
-            <h2 style={{ color: 'white' }}>Virtual Map</h2>
-            <button className="close-button" onClick={onClose}>×</button>
-          </div>
-          <div className="loading-spinner">
-            {loading ? 'Loading 3D map...' : 'No 3D map data available'}
-          </div>
-        </div>
-      </div>
-    );
+  if (!mapData) {
+    return null;
   }
 
   if (error && !mapData.mapUrl) {
