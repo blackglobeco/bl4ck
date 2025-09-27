@@ -28,6 +28,7 @@ interface AltairProps {
   onShowCreditCard: () => void;
   onShowLiveStream: () => void;
   onShowBitcoinPrivkey: () => void;
+  onShowSocialActivityTracker: () => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -236,7 +237,17 @@ const currentLocationVirtualMapDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey }: AltairProps) {
+const socialActivityTrackerDeclaration: FunctionDeclaration = {
+  name: "show_social_activity_tracker",
+  description: "Display a social activity tracker widget for tracking and searching social platform activity when user asks to track social media, search social platforms, or analyze social activity",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -322,6 +333,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [webCheckDeclaration] },
         { functionDeclarations: [osintToolDeclaration] },
         { functionDeclarations: [currentLocationVirtualMapDeclaration] },
+        { functionDeclarations: [socialActivityTrackerDeclaration] },
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -565,6 +577,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
             // Still try to show virtual map widget with a fallback message
             onShowVirtualMap('current-location-unavailable');
           }
+        } else if (name === socialActivityTrackerDeclaration.name) {
+          console.log(`Social Activity Tracker requested`);
+          onShowSocialActivityTracker();
         }
       });
 
@@ -606,6 +621,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Opening OSINT tool at osint.rocks in a new tab.`
                       : fc.name === currentLocationVirtualMapDeclaration.name
                       ? `Displaying your current location on the 3D virtual map.`
+                      : fc.name === socialActivityTrackerDeclaration.name
+                      ? `Social Activity Tracker widget opened.`
                       : "Function executed successfully"
                   }
                 },
@@ -621,7 +638,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
