@@ -446,6 +446,10 @@ In order to ask Black AI a question, the user must give the prompt in the conver
             case 'reddit':
               searchUrl = `https://www.reddit.com/search/?q=${encodedQuery}`;
               break;
+            case 'telegram':
+              const tUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9._]/g, '');
+              searchUrl = `https://t.me/${tUsernameQuery}`;
+              break;
             case 'tiktok':
               const ttUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9._]/g, '');
               searchUrl = `https://www.tiktok.com/@${ttUsernameQuery}`;
