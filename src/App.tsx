@@ -29,6 +29,7 @@ import { EmailSpooferWidget } from "./components/email-spoofer-widget/EmailSpoof
 import { CreditCardWidget } from "./components/credit-card-widget/CreditCardWidget";
 import { LiveStreamWidget } from "./components/live-stream-widget/LiveStreamWidget";
 import { BitcoinPrivkeyWidget } from "./components/bitcoin-privkey-widget/BitcoinPrivkeyWidget";
+import { SocialActivityTrackerWidget } from "./components/social-activity-tracker-widget/SocialActivityTrackerWidget";
 import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -70,6 +71,8 @@ function App() {
   const [showLiveStreamWidget, setShowLiveStreamWidget] = useState<boolean>(false);
   // bitcoin privkey widget state
   const [showBitcoinPrivkeyWidget, setShowBitcoinPrivkeyWidget] = useState<boolean>(false);
+  // social activity tracker widget state
+  const [showSocialActivityTrackerWidget, setShowSocialActivityTrackerWidget] = useState<boolean>(false);
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
@@ -81,6 +84,7 @@ function App() {
     setShowCreditCardWidget(false);
     setShowLiveStreamWidget(false);
     setShowBitcoinPrivkeyWidget(false);
+    setShowSocialActivityTrackerWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -155,6 +159,12 @@ function App() {
                     setShowBitcoinPrivkeyWidget(true);
                   }, 100);
                 }}
+                onShowSocialActivityTracker={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowSocialActivityTrackerWidget(true);
+                  }, 100);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -224,6 +234,12 @@ function App() {
 
         {showBitcoinPrivkeyWidget && (
           <BitcoinPrivkeyWidget
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showSocialActivityTrackerWidget && (
+          <SocialActivityTrackerWidget
             onClose={closeAllWidgets}
           />
         )}
