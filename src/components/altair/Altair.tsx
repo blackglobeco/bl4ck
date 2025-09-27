@@ -447,12 +447,12 @@ In order to ask Black AI a question, the user must give the prompt in the conver
               searchUrl = `https://www.reddit.com/search/?q=${encodedQuery}`;
               break;
             case 'tiktok':
-              const ttUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9_]/g, '');
+              const ttUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9._]/g, '');
               searchUrl = `https://www.tiktok.com/@${ttUsernameQuery}`;
               break;
             case 'x':
               // Remove spaces and special characters for username-like queries
-              const xUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9_]/g, '');
+              const xUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9._]/g, '');
               searchUrl = `https://x.com/${xUsernameQuery}`;
               break;
             case 'facebook':
