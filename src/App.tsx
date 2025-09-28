@@ -30,6 +30,7 @@ import { CreditCardWidget } from "./components/credit-card-widget/CreditCardWidg
 import { LiveStreamWidget } from "./components/live-stream-widget/LiveStreamWidget";
 import { BitcoinPrivkeyWidget } from "./components/bitcoin-privkey-widget/BitcoinPrivkeyWidget";
 import { SocialActivityTrackerWidget } from "./components/social-activity-tracker-widget/SocialActivityTrackerWidget";
+import { PhotoGeoWidget } from "./components/photo-geo-widget/PhotoGeoWidget";
 import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -73,6 +74,8 @@ function App() {
   const [showBitcoinPrivkeyWidget, setShowBitcoinPrivkeyWidget] = useState<boolean>(false);
   // social activity tracker widget state
   const [showSocialActivityTrackerWidget, setShowSocialActivityTrackerWidget] = useState<boolean>(false);
+  // photo geo widget state
+  const [showPhotoGeoWidget, setShowPhotoGeoWidget] = useState<boolean>(false);
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
@@ -85,6 +88,7 @@ function App() {
     setShowLiveStreamWidget(false);
     setShowBitcoinPrivkeyWidget(false);
     setShowSocialActivityTrackerWidget(false);
+    setShowPhotoGeoWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -165,6 +169,12 @@ function App() {
                     setShowSocialActivityTrackerWidget(true);
                   }, 100);
                 }}
+                onShowPhotoGeo={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowPhotoGeoWidget(true);
+                  }, 100);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -240,6 +250,12 @@ function App() {
 
         {showSocialActivityTrackerWidget && (
           <SocialActivityTrackerWidget
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showPhotoGeoWidget && (
+          <PhotoGeoWidget
             onClose={closeAllWidgets}
           />
         )}
