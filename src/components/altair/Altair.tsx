@@ -1,3 +1,4 @@
+
 /**
  * Copyright 2024 Google LLC
  *
@@ -29,6 +30,7 @@ interface AltairProps {
   onShowLiveStream: () => void;
   onShowBitcoinPrivkey: () => void;
   onShowSocialActivityTracker: () => void;
+  onShowPhotoGeo: () => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -247,7 +249,17 @@ const socialActivityTrackerDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker }: AltairProps) {
+const photoGeoDeclaration: FunctionDeclaration = {
+  name: "show_photo_geo_widget",
+  description: "Display a photo geo location widget when user asks to track or search geo location from photo or image, analyze photo metadata, or extract location from image",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -334,6 +346,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [osintToolDeclaration] },
         { functionDeclarations: [currentLocationVirtualMapDeclaration] },
         { functionDeclarations: [socialActivityTrackerDeclaration] },
+        { functionDeclarations: [photoGeoDeclaration] },
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -584,6 +597,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === socialActivityTrackerDeclaration.name) {
           console.log(`Social Activity Tracker requested`);
           onShowSocialActivityTracker();
+        } else if (name === photoGeoDeclaration.name) {
+          console.log(`Photo Geo Location widget requested`);
+          onShowPhotoGeo();
         }
       });
 
@@ -627,6 +643,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Displaying your current location on the 3D virtual map.`
                       : fc.name === socialActivityTrackerDeclaration.name
                       ? `Social Activity Tracker widget opened.`
+                      : fc.name === photoGeoDeclaration.name
+                      ? `Photo Geo Location widget opened.`
                       : "Function executed successfully"
                   }
                 },
@@ -642,7 +660,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
