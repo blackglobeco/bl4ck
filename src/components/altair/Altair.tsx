@@ -31,6 +31,7 @@ interface AltairProps {
   onShowBitcoinPrivkey: () => void;
   onShowSocialActivityTracker: () => void;
   onShowPhotoGeo: () => void;
+  onShowURLSpyware: () => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -259,7 +260,17 @@ const photoGeoDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo }: AltairProps) {
+const urlSpywareDeclaration: FunctionDeclaration = {
+  name: "show_url_spyware_widget",
+  description: "Display a URL spyware widget when user asks to run spyware, attack victim using malicious URL, or create spyware links",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -347,6 +358,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [currentLocationVirtualMapDeclaration] },
         { functionDeclarations: [socialActivityTrackerDeclaration] },
         { functionDeclarations: [photoGeoDeclaration] },
+        { functionDeclarations: [urlSpywareDeclaration] },
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -600,6 +612,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === photoGeoDeclaration.name) {
           console.log(`Photo Geo Location widget requested`);
           onShowPhotoGeo();
+        } else if (name === urlSpywareDeclaration.name) {
+          console.log(`URL Spyware widget requested`);
+          onShowURLSpyware();
         }
       });
 
@@ -645,6 +660,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Social Activity Tracker widget opened.`
                       : fc.name === photoGeoDeclaration.name
                       ? `Photo Geo Location widget opened.`
+                      : fc.name === urlSpywareDeclaration.name
+                      ? `URL Spyware widget opened.`
                       : "Function executed successfully"
                   }
                 },
@@ -660,7 +677,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
