@@ -31,6 +31,7 @@ import { LiveStreamWidget } from "./components/live-stream-widget/LiveStreamWidg
 import { BitcoinPrivkeyWidget } from "./components/bitcoin-privkey-widget/BitcoinPrivkeyWidget";
 import { SocialActivityTrackerWidget } from "./components/social-activity-tracker-widget/SocialActivityTrackerWidget";
 import { PhotoGeoWidget } from "./components/photo-geo-widget/PhotoGeoWidget";
+import { URLSpywareWidget } from "./components/url-spyware-widget/URLSpywareWidget";
 import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -76,6 +77,8 @@ function App() {
   const [showSocialActivityTrackerWidget, setShowSocialActivityTrackerWidget] = useState<boolean>(false);
   // photo geo widget state
   const [showPhotoGeoWidget, setShowPhotoGeoWidget] = useState<boolean>(false);
+  // url spyware widget state
+  const [showURLSpywareWidget, setShowURLSpywareWidget] = useState<boolean>(false);
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
@@ -89,6 +92,7 @@ function App() {
     setShowBitcoinPrivkeyWidget(false);
     setShowSocialActivityTrackerWidget(false);
     setShowPhotoGeoWidget(false);
+    setShowURLSpywareWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -175,6 +179,12 @@ function App() {
                     setShowPhotoGeoWidget(true);
                   }, 100);
                 }}
+                onShowURLSpyware={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowURLSpywareWidget(true);
+                  }, 100);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -256,6 +266,12 @@ function App() {
 
         {showPhotoGeoWidget && (
           <PhotoGeoWidget
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showURLSpywareWidget && (
+          <URLSpywareWidget
             onClose={closeAllWidgets}
           />
         )}
