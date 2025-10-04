@@ -32,6 +32,7 @@ import { BitcoinPrivkeyWidget } from "./components/bitcoin-privkey-widget/Bitcoi
 import { SocialActivityTrackerWidget } from "./components/social-activity-tracker-widget/SocialActivityTrackerWidget";
 import { PhotoGeoWidget } from "./components/photo-geo-widget/PhotoGeoWidget";
 import { URLSpywareWidget } from "./components/url-spyware-widget/URLSpywareWidget";
+import { SpiderFootWidget } from "./components/spiderfoot-widget/SpiderFootWidget";
 import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -79,6 +80,8 @@ function App() {
   const [showPhotoGeoWidget, setShowPhotoGeoWidget] = useState<boolean>(false);
   // url spyware widget state
   const [showURLSpywareWidget, setShowURLSpywareWidget] = useState<boolean>(false);
+  // spiderfoot widget state
+  const [showSpiderFootWidget, setShowSpiderFootWidget] = useState<boolean>(false);
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
@@ -93,6 +96,7 @@ function App() {
     setShowSocialActivityTrackerWidget(false);
     setShowPhotoGeoWidget(false);
     setShowURLSpywareWidget(false);
+    setShowSpiderFootWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -185,6 +189,12 @@ function App() {
                     setShowURLSpywareWidget(true);
                   }, 100);
                 }}
+                onShowSpiderFoot={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowSpiderFootWidget(true);
+                  }, 100);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -272,6 +282,12 @@ function App() {
 
         {showURLSpywareWidget && (
           <URLSpywareWidget
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showSpiderFootWidget && (
+          <SpiderFootWidget
             onClose={closeAllWidgets}
           />
         )}
