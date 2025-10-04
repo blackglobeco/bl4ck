@@ -710,7 +710,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       : fc.name === backgroundCheckDeclaration.name
                       ? `Opening background check for "${(fc.args as any).name}" in a new tab.`
                       : fc.name === spiderfootOsintDeclaration.name // Response for SpiderFoot OSINT tool
-                      ? `Opening SpiderFoot OSINT tool at https://gn9lyj-5000.csb.app/ in a new tab.`
+                      ? `SpiderFoot OSINT tool widget opened.`
                       : "Function executed successfully"
                   }
                 },
