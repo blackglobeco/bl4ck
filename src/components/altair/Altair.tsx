@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2024 Google LLC
  *
@@ -261,12 +260,27 @@ const photoGeoDeclaration: FunctionDeclaration = {
 };
 
 const urlSpywareDeclaration: FunctionDeclaration = {
-  name: "show_url_spyware_widget",
-  description: "Display a URL spyware widget when user asks to run spyware, attack victim using malicious URL, or create spyware links",
+  name: "show_url_spyware",
+  description: "Display a URL spyware tool when user asks about URL tracking or monitoring",
   parameters: {
     type: Type.OBJECT,
     properties: {},
     required: []
+  }
+};
+
+const backgroundCheckDeclaration: FunctionDeclaration = {
+  name: "run_background_check",
+  description: "Run a background check on a person by opening CyberBackgroundChecks in a new tab",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      name: {
+        type: Type.STRING,
+        description: "The full name of the person to run a background check on (e.g., 'Ivan Martinez', 'John Smith')"
+      }
+    },
+    required: ["name"]
   }
 };
 
@@ -359,6 +373,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [socialActivityTrackerDeclaration] },
         { functionDeclarations: [photoGeoDeclaration] },
         { functionDeclarations: [urlSpywareDeclaration] },
+        { functionDeclarations: [backgroundCheckDeclaration] },
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -613,8 +628,22 @@ In order to ask Black AI a question, the user must give the prompt in the conver
           console.log(`Photo Geo Location widget requested`);
           onShowPhotoGeo();
         } else if (name === urlSpywareDeclaration.name) {
-          console.log(`URL Spyware widget requested`);
+          console.log(`URL Spyware requested`);
           onShowURLSpyware();
+        } else if (name === backgroundCheckDeclaration.name) {
+          const personName = (fc.args as any).name;
+          console.log(`Background check requested for: ${personName}`);
+
+          // Convert name to URL-friendly format (lowercase, replace spaces with hyphens)
+          const urlFriendlyName = personName.toLowerCase().replace(/\s+/g, '-');
+          const backgroundCheckUrl = `https://www.cyberbackgroundchecks.com/people/${urlFriendlyName}`;
+
+          try {
+            window.open(backgroundCheckUrl, '_blank', 'noopener,noreferrer');
+            console.log(`Successfully opened background check for "${personName}"`);
+          } catch (error) {
+            console.error(`Failed to open background check for "${personName}"`, error);
+          }
         }
       });
 
@@ -662,6 +691,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Photo Geo Location widget opened.`
                       : fc.name === urlSpywareDeclaration.name
                       ? `URL Spyware widget opened.`
+                      : fc.name === backgroundCheckDeclaration.name
+                      ? `Opening background check for "${(fc.args as any).name}" in a new tab.`
                       : "Function executed successfully"
                   }
                 },
