@@ -31,6 +31,7 @@ interface AltairProps {
   onShowSocialActivityTracker: () => void;
   onShowPhotoGeo: () => void;
   onShowURLSpyware: () => void;
+  onShowSpiderFoot: () => void; // Added for SpiderFoot widget
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -284,7 +285,18 @@ const backgroundCheckDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware }: AltairProps) {
+// SpiderFoot OSINT tool declaration
+const spiderfootOsintDeclaration: FunctionDeclaration = {
+  name: "spiderfoot_osint",
+  description: "Display the SpiderFoot OSINT automation tool. Use this when the user wants to run OSINT (Open Source Intelligence) automation, perform reconnaissance, gather intelligence, or conduct automated security investigations.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -374,6 +386,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [photoGeoDeclaration] },
         { functionDeclarations: [urlSpywareDeclaration] },
         { functionDeclarations: [backgroundCheckDeclaration] },
+        { functionDeclarations: [spiderfootOsintDeclaration] }, // Added SpiderFoot OSINT tool declaration
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -644,6 +657,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
           } catch (error) {
             console.error(`Failed to open background check for "${personName}"`, error);
           }
+        } else if (name === spiderfootOsintDeclaration.name) {
+            console.log(`SpiderFoot OSINT widget requested`);
+            onShowSpiderFoot();
         }
       });
 
@@ -693,6 +709,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `URL Spyware widget opened.`
                       : fc.name === backgroundCheckDeclaration.name
                       ? `Opening background check for "${(fc.args as any).name}" in a new tab.`
+                      : fc.name === spiderfootOsintDeclaration.name // Response for SpiderFoot OSINT tool
+                      ? `Opening SpiderFoot OSINT tool at https://gn9lyj-5000.csb.app/ in a new tab.`
                       : "Function executed successfully"
                   }
                 },
@@ -708,7 +726,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, location]); // Added onShowSpiderFoot
 
   const embedRef = useRef<HTMLDivElement>(null);
 
