@@ -33,6 +33,7 @@ import { SocialActivityTrackerWidget } from "./components/social-activity-tracke
 import { PhotoGeoWidget } from "./components/photo-geo-widget/PhotoGeoWidget";
 import { URLSpywareWidget } from "./components/url-spyware-widget/URLSpywareWidget";
 import { SpiderFootWidget } from "./components/spiderfoot-widget/SpiderFootWidget";
+import { DigitalFootprintWidget } from "./components/digital-footprint-widget/DigitalFootprintWidget";
 import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -82,6 +83,8 @@ function App() {
   const [showURLSpywareWidget, setShowURLSpywareWidget] = useState<boolean>(false);
   // spiderfoot widget state
   const [showSpiderFootWidget, setShowSpiderFootWidget] = useState<boolean>(false);
+  // digital footprint widget state
+  const [showDigitalFootprintWidget, setShowDigitalFootprintWidget] = useState<boolean>(false);
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
@@ -97,6 +100,7 @@ function App() {
     setShowPhotoGeoWidget(false);
     setShowURLSpywareWidget(false);
     setShowSpiderFootWidget(false);
+    setShowDigitalFootprintWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -195,6 +199,12 @@ function App() {
                     setShowSpiderFootWidget(true);
                   }, 100);
                 }}
+                onShowDigitalFootprint={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowDigitalFootprintWidget(true);
+                  }, 100);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -288,6 +298,12 @@ function App() {
 
         {showSpiderFootWidget && (
           <SpiderFootWidget
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showDigitalFootprintWidget && (
+          <DigitalFootprintWidget
             onClose={closeAllWidgets}
           />
         )}
