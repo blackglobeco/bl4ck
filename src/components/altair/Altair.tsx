@@ -15,9 +15,9 @@
  */
 import { useEffect, useRef, useState, memo } from "react";
 import vegaEmbed from "vega-embed";
-import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { Modality, LiveServerToolCall, FunctionDeclaration, Type } from "@google/genai";
 import { getCurrentLocation, LocationData, LocationError } from "../../lib/location";
+import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 
 interface AltairProps {
   onShowMap: (location: string) => void;
@@ -32,6 +32,7 @@ interface AltairProps {
   onShowPhotoGeo: () => void;
   onShowURLSpyware: () => void;
   onShowSpiderFoot: () => void; // Added for SpiderFoot widget
+  onShowDigitalFootprint: () => void; // Added for Digital Footprint widget
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -296,7 +297,19 @@ const spiderfootOsintDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot }: AltairProps) {
+// Digital Footprint widget declaration
+const digitalFootprintDeclaration: FunctionDeclaration = {
+  name: "show_digital_footprint",
+  description: "Display the Digital Footprint widget tool for searching or looking up digital information and investigating digital footprints.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
+
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -387,6 +400,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [urlSpywareDeclaration] },
         { functionDeclarations: [backgroundCheckDeclaration] },
         { functionDeclarations: [spiderfootOsintDeclaration] }, // Added SpiderFoot OSINT tool declaration
+        { functionDeclarations: [digitalFootprintDeclaration] }, // Added Digital Footprint tool declaration
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -660,6 +674,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === spiderfootOsintDeclaration.name) {
             console.log(`SpiderFoot OSINT widget requested`);
             onShowSpiderFoot();
+        } else if (fc.name === digitalFootprintDeclaration.name) {
+          console.log(`Digital Footprint widget requested`);
+          onShowDigitalFootprint();
         }
       });
 
@@ -711,6 +728,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Opening background check for "${(fc.args as any).name}" in a new tab.`
                       : fc.name === spiderfootOsintDeclaration.name // Response for SpiderFoot OSINT tool
                       ? `SpiderFoot OSINT tool widget opened.`
+                      : fc.name === digitalFootprintDeclaration.name // Response for Digital Footprint tool
+                      ? `Digital Footprint widget opened.`
                       : "Function executed successfully"
                   }
                 },
@@ -726,7 +745,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, location]); // Added onShowSpiderFoot
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, location]); // Added onShowDigitalFootprint
 
   const embedRef = useRef<HTMLDivElement>(null);
 
