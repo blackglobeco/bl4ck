@@ -13,7 +13,7 @@ export const SpiderFootWidget: React.FC<SpiderFootWidgetProps> = ({ onClose }) =
         <div className="spiderfoot-content">
           <div className="spiderfoot-container">
             <iframe
-              src="https://gn9lyj-5000.csb.app"
+              src="https://g579vl-5000.csb.app"
               className="spiderfoot-iframe"
               title="SpiderFoot OSINT Tool"
               allowFullScreen
