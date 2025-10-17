@@ -34,6 +34,7 @@ interface AltairProps {
   onShowSpiderFoot: () => void; // Added for SpiderFoot widget
   onShowDigitalFootprint: () => void; // Added for Digital Footprint widget
   onShowSubdomainFinder: () => void; // Added for Subdomain Finder widget
+  onShowURLMasker: () => void; // Added for URL Masker widget
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -310,8 +311,19 @@ const subdomainFinderDeclaration: FunctionDeclaration = {
   }
 };
 
+// URL Masker widget declaration
+const urlMaskerDeclaration: FunctionDeclaration = {
+  name: "show_url_masker",
+  description: "Display the URL Masker tool when user asks to mask, spoof, or disguise a URL. Use this for URL masking, URL spoofing, or creating disguised links.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder }: AltairProps) {
+
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -403,6 +415,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [spiderfootOsintDeclaration] }, // Added SpiderFoot OSINT tool declaration
         { functionDeclarations: [digitalFootprintDeclaration] }, // Added Digital Footprint tool declaration
         { functionDeclarations: [subdomainFinderDeclaration] }, // Added Subdomain Finder tool declaration
+        { functionDeclarations: [urlMaskerDeclaration] }, // Added URL Masker tool declaration
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -674,6 +687,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (fc.name === subdomainFinderDeclaration.name) {
           console.log(`Subdomain Finder widget requested`);
           onShowSubdomainFinder();
+        } else if (fc.name === urlMaskerDeclaration.name) {
+          console.log(`URL Masker widget requested`);
+          onShowURLMasker();
         }
       });
 
@@ -725,6 +741,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `SpiderFoot OSINT tool widget opened.`
                       : fc.name === digitalFootprintDeclaration.name // Response for Digital Footprint tool
                       ? `Digital Footprint widget opened.`
+                      : fc.name === urlMaskerDeclaration.name // Response for URL Masker tool
+                      ? `URL Masker widget opened.`
                       : "Function executed successfully"
                   }
                 },
@@ -740,7 +758,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
