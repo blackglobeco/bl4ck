@@ -35,6 +35,7 @@ import { URLSpywareWidget } from "./components/url-spyware-widget/URLSpywareWidg
 import { SpiderFootWidget } from "./components/spiderfoot-widget/SpiderFootWidget";
 import { DigitalFootprintWidget } from "./components/digital-footprint-widget/DigitalFootprintWidget";
 import { SubdomainFinderWidget } from "./components/subdomain-finder-widget/SubdomainFinderWidget";
+import { URLMaskerWidget } from "./components/url-masker-widget/URLMaskerWidget";
 import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -88,6 +89,8 @@ function App() {
   const [showDigitalFootprintWidget, setShowDigitalFootprintWidget] = useState<boolean>(false);
   // subdomain finder widget state
   const [showSubdomainFinderWidget, setShowSubdomainFinderWidget] = useState<boolean>(false);
+  // url masker widget state
+  const [showURLMaskerWidget, setShowURLMaskerWidget] = useState<boolean>(false);
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
@@ -105,6 +108,7 @@ function App() {
     setShowSpiderFootWidget(false);
     setShowDigitalFootprintWidget(false);
     setShowSubdomainFinderWidget(false);
+    setShowURLMaskerWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -215,6 +219,12 @@ function App() {
                     setShowSubdomainFinderWidget(true);
                   }, 100);
                 }}
+                onShowURLMasker={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowURLMaskerWidget(true);
+                  }, 100);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -320,6 +330,12 @@ function App() {
 
         {showSubdomainFinderWidget && (
           <SubdomainFinderWidget
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showURLMaskerWidget && (
+          <URLMaskerWidget
             onClose={closeAllWidgets}
           />
         )}
