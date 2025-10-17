@@ -34,6 +34,7 @@ import { PhotoGeoWidget } from "./components/photo-geo-widget/PhotoGeoWidget";
 import { URLSpywareWidget } from "./components/url-spyware-widget/URLSpywareWidget";
 import { SpiderFootWidget } from "./components/spiderfoot-widget/SpiderFootWidget";
 import { DigitalFootprintWidget } from "./components/digital-footprint-widget/DigitalFootprintWidget";
+import { SubdomainFinderWidget } from "./components/subdomain-finder-widget/SubdomainFinderWidget";
 import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -85,6 +86,8 @@ function App() {
   const [showSpiderFootWidget, setShowSpiderFootWidget] = useState<boolean>(false);
   // digital footprint widget state
   const [showDigitalFootprintWidget, setShowDigitalFootprintWidget] = useState<boolean>(false);
+  // subdomain finder widget state
+  const [showSubdomainFinderWidget, setShowSubdomainFinderWidget] = useState<boolean>(false);
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
@@ -101,6 +104,7 @@ function App() {
     setShowURLSpywareWidget(false);
     setShowSpiderFootWidget(false);
     setShowDigitalFootprintWidget(false);
+    setShowSubdomainFinderWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -205,6 +209,12 @@ function App() {
                     setShowDigitalFootprintWidget(true);
                   }, 100);
                 }}
+                onShowSubdomainFinder={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowSubdomainFinderWidget(true);
+                  }, 100);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -304,6 +314,12 @@ function App() {
 
         {showDigitalFootprintWidget && (
           <DigitalFootprintWidget
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showSubdomainFinderWidget && (
+          <SubdomainFinderWidget
             onClose={closeAllWidgets}
           />
         )}
