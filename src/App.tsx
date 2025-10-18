@@ -36,6 +36,7 @@ import { SpiderFootWidget } from "./components/spiderfoot-widget/SpiderFootWidge
 import { DigitalFootprintWidget } from "./components/digital-footprint-widget/DigitalFootprintWidget";
 import { SubdomainFinderWidget } from "./components/subdomain-finder-widget/SubdomainFinderWidget";
 import { URLMaskerWidget } from "./components/url-masker-widget/URLMaskerWidget";
+import { WorldIPTVWidget } from "./components/world-iptv-widget/WorldIPTVWidget";
 import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -91,6 +92,8 @@ function App() {
   const [showSubdomainFinderWidget, setShowSubdomainFinderWidget] = useState<boolean>(false);
   // url masker widget state
   const [showURLMaskerWidget, setShowURLMaskerWidget] = useState<boolean>(false);
+  // world iptv widget state
+  const [showWorldIPTVWidget, setShowWorldIPTVWidget] = useState<boolean>(false);
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
@@ -109,6 +112,7 @@ function App() {
     setShowDigitalFootprintWidget(false);
     setShowSubdomainFinderWidget(false);
     setShowURLMaskerWidget(false);
+    setShowWorldIPTVWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -225,6 +229,12 @@ function App() {
                     setShowURLMaskerWidget(true);
                   }, 100);
                 }}
+                onShowWorldIPTV={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowWorldIPTVWidget(true);
+                  }, 100);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -336,6 +346,12 @@ function App() {
 
         {showURLMaskerWidget && (
           <URLMaskerWidget
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showWorldIPTVWidget && (
+          <WorldIPTVWidget
             onClose={closeAllWidgets}
           />
         )}
