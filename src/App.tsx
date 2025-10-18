@@ -37,6 +37,7 @@ import { DigitalFootprintWidget } from "./components/digital-footprint-widget/Di
 import { SubdomainFinderWidget } from "./components/subdomain-finder-widget/SubdomainFinderWidget";
 import { URLMaskerWidget } from "./components/url-masker-widget/URLMaskerWidget";
 import { WorldIPTVWidget } from "./components/world-iptv-widget/WorldIPTVWidget";
+import { PhishMakerWidget } from "./components/phish-maker-widget/PhishMakerWidget";
 import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -94,6 +95,8 @@ function App() {
   const [showURLMaskerWidget, setShowURLMaskerWidget] = useState<boolean>(false);
   // world iptv widget state
   const [showWorldIPTVWidget, setShowWorldIPTVWidget] = useState<boolean>(false);
+  // phish maker widget state
+  const [showPhishMakerWidget, setShowPhishMakerWidget] = useState<boolean>(false);
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
@@ -113,6 +116,7 @@ function App() {
     setShowSubdomainFinderWidget(false);
     setShowURLMaskerWidget(false);
     setShowWorldIPTVWidget(false);
+    setShowPhishMakerWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -235,6 +239,12 @@ function App() {
                     setShowWorldIPTVWidget(true);
                   }, 100);
                 }}
+                onShowPhishMaker={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowPhishMakerWidget(true);
+                  }, 100);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -352,6 +362,12 @@ function App() {
 
         {showWorldIPTVWidget && (
           <WorldIPTVWidget
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showPhishMakerWidget && (
+          <PhishMakerWidget
             onClose={closeAllWidgets}
           />
         )}
