@@ -36,6 +36,7 @@ interface AltairProps {
   onShowSubdomainFinder: () => void; // Added for Subdomain Finder widget
   onShowURLMasker: () => void; // Added for URL Masker widget
   onShowWorldIPTV: () => void; // Added for World IPTV widget
+  onShowPhishMaker: () => void; // Added for Phish Maker widget
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -334,8 +335,19 @@ const worldIPTVDeclaration: FunctionDeclaration = {
   }
 };
 
+// Phish Maker widget declaration
+const phishMakerDeclaration: FunctionDeclaration = {
+  name: "show_phish_maker",
+  description: "Display the Phish Maker widget. Use this when the user asks to create a phishing page or site.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV }: AltairProps) {
+
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -429,6 +441,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [subdomainFinderDeclaration] }, // Added Subdomain Finder tool declaration
         { functionDeclarations: [urlMaskerDeclaration] }, // Added URL Masker tool declaration
         { functionDeclarations: [worldIPTVDeclaration] }, // Added World IPTV tool declaration
+        { functionDeclarations: [phishMakerDeclaration] }, // Added Phish Maker tool declaration
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -706,6 +719,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === "show_world_iptv") {
           console.log(`World IPTV widget requested`);
           onShowWorldIPTV();
+        } else if (name === phishMakerDeclaration.name) {
+          console.log(`Phish Maker widget requested`);
+          onShowPhishMaker();
         }
       });
 
@@ -761,6 +777,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `URL Masker widget opened.`
                       : fc.name === "show_world_iptv" // Response for World IPTV widget
                       ? `World IPTV widget opened. You can now watch world IPTV channels.`
+                      : fc.name === phishMakerDeclaration.name // Response for Phish Maker widget
+                      ? `Phish Maker widget opened. You can now create phishing pages or sites.`
                       : "Function executed successfully"
                   }
                 },
@@ -776,7 +794,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
