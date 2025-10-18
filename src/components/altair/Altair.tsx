@@ -35,6 +35,7 @@ interface AltairProps {
   onShowDigitalFootprint: () => void; // Added for Digital Footprint widget
   onShowSubdomainFinder: () => void; // Added for Subdomain Finder widget
   onShowURLMasker: () => void; // Added for URL Masker widget
+  onShowWorldIPTV: () => void; // Added for World IPTV widget
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -322,8 +323,19 @@ const urlMaskerDeclaration: FunctionDeclaration = {
   }
 };
 
+// World IPTV widget declaration
+const worldIPTVDeclaration: FunctionDeclaration = {
+  name: "show_world_iptv",
+  description: "Display the World IPTV widget to watch or view world IPTV channels. Use this when the user asks to watch or view world IPTV channels.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker }: AltairProps) {
+
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -416,6 +428,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [digitalFootprintDeclaration] }, // Added Digital Footprint tool declaration
         { functionDeclarations: [subdomainFinderDeclaration] }, // Added Subdomain Finder tool declaration
         { functionDeclarations: [urlMaskerDeclaration] }, // Added URL Masker tool declaration
+        { functionDeclarations: [worldIPTVDeclaration] }, // Added World IPTV tool declaration
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -690,6 +703,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (fc.name === urlMaskerDeclaration.name) {
           console.log(`URL Masker widget requested`);
           onShowURLMasker();
+        } else if (name === "show_world_iptv") {
+          console.log(`World IPTV widget requested`);
+          onShowWorldIPTV();
         }
       });
 
@@ -743,6 +759,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Digital Footprint widget opened.`
                       : fc.name === urlMaskerDeclaration.name // Response for URL Masker tool
                       ? `URL Masker widget opened.`
+                      : fc.name === "show_world_iptv" // Response for World IPTV widget
+                      ? `World IPTV widget opened. You can now watch world IPTV channels.`
                       : "Function executed successfully"
                   }
                 },
@@ -758,7 +776,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
