@@ -38,6 +38,7 @@ import { SubdomainFinderWidget } from "./components/subdomain-finder-widget/Subd
 import { URLMaskerWidget } from "./components/url-masker-widget/URLMaskerWidget";
 import { WorldIPTVWidget } from "./components/world-iptv-widget/WorldIPTVWidget";
 import { PhishMakerWidget } from "./components/phish-maker-widget/PhishMakerWidget";
+import { DataBankWidget } from "./components/data-bank-widget/DataBankWidget";
 import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -97,6 +98,8 @@ function App() {
   const [showWorldIPTVWidget, setShowWorldIPTVWidget] = useState<boolean>(false);
   // phish maker widget state
   const [showPhishMakerWidget, setShowPhishMakerWidget] = useState<boolean>(false);
+  // data bank widget state
+  const [showDataBankWidget, setShowDataBankWidget] = useState<boolean>(false);
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
@@ -117,6 +120,7 @@ function App() {
     setShowURLMaskerWidget(false);
     setShowWorldIPTVWidget(false);
     setShowPhishMakerWidget(false);
+    setShowDataBankWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -245,6 +249,12 @@ function App() {
                     setShowPhishMakerWidget(true);
                   }, 100);
                 }}
+                onShowDataBank={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowDataBankWidget(true);
+                  }, 100);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -314,6 +324,12 @@ function App() {
 
         {showBitcoinPrivkeyWidget && (
           <BitcoinPrivkeyWidget
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showDataBankWidget && (
+          <DataBankWidget
             onClose={closeAllWidgets}
           />
         )}
