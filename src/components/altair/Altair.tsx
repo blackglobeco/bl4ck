@@ -37,6 +37,7 @@ interface AltairProps {
   onShowURLMasker: () => void; // Added for URL Masker widget
   onShowWorldIPTV: () => void; // Added for World IPTV widget
   onShowPhishMaker: () => void; // Added for Phish Maker widget
+  onShowDataBank: () => void; // Added for Data Bank widget
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -313,6 +314,17 @@ const subdomainFinderDeclaration: FunctionDeclaration = {
   }
 };
 
+// Data Bank widget declaration
+const dataBankDeclaration: FunctionDeclaration = {
+  name: "show_data_bank",
+  description: "Display the Data Bank widget to access database, data bank, or search through database records. Use this when user wants to access the data bank, database, or look up information in the database.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
+
 // URL Masker widget declaration
 const urlMaskerDeclaration: FunctionDeclaration = {
   name: "show_url_masker",
@@ -347,7 +359,7 @@ const phishMakerDeclaration: FunctionDeclaration = {
 };
 
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker }: AltairProps) {
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -442,6 +454,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [urlMaskerDeclaration] }, // Added URL Masker tool declaration
         { functionDeclarations: [worldIPTVDeclaration] }, // Added World IPTV tool declaration
         { functionDeclarations: [phishMakerDeclaration] }, // Added Phish Maker tool declaration
+        { functionDeclarations: [dataBankDeclaration] }, // Added Data Bank tool declaration
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -722,6 +735,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === phishMakerDeclaration.name) {
           console.log(`Phish Maker widget requested`);
           onShowPhishMaker();
+        } else if (name === dataBankDeclaration.name) {
+          console.log(`Data Bank widget requested`);
+          onShowDataBank();
         }
       });
 
@@ -794,7 +810,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
