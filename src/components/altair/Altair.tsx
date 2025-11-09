@@ -752,7 +752,6 @@ In order to ask Black AI a question, the user must give the prompt in the conver
           console.log(`Data Bank widget requested`);
           onShowDataBank();
         } else if (name === androidSpywareDeclaration.name) {
-          const url = (fc.args as any).url;
           console.log(`Android Spyware requested`);
           onShowAndroidSpyware();
         }
