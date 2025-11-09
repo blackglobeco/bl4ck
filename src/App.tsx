@@ -182,7 +182,7 @@ function App() {
                     setShowEmailSpooferWidget(true);
                   }, 100);
                 }}
-                onShowAndroidSpyware={(url) => {
+                onShowAndroidSpyware={() => {
                   closeAllWidgets();
                   setTimeout(() => {
                     setShowAndroidSpywareWidget(true);
@@ -400,7 +400,9 @@ function App() {
         )}
 
         {showAndroidSpywareWidget && (
-          <AndroidSpywareWidget onClose={() => setShowAndroidSpywareWidget(false)} />
+          <AndroidSpywareWidget 
+            onClose={closeAllWidgets} 
+          />
         )}
 
       </LiveAPIProvider>
