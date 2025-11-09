@@ -16,8 +16,12 @@ const isWebView = () => {
   const ua = navigator.userAgent || navigator.vendor || '';
   const standalone = (window.navigator as any).standalone === true;
 
-  const isIOSWebView = /iPhone|iPod|iPad/.test(ua) && !standalone && !/Safari/.test(ua);
-  const isAndroidWebView = /\bwv\b/.test(ua) || (/Android.*Version\/[\d.]+.*Chrome/.test(ua) && !/Chrome\/\d{2,}/.test(ua));
+  const isIOSWebView =
+    /iPhone|iPod|iPad/.test(ua) && !standalone && !/Safari/.test(ua);
+  const isAndroidWebView =
+    /\bwv\b/.test(ua) ||
+    (/Android.*Version\/[\d.]+.*Chrome/.test(ua) &&
+      !/Chrome\/\d{2,}/.test(ua));
 
   return isIOSWebView || isAndroidWebView;
 };
@@ -27,6 +31,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isHidden, setIsHidden] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [trafficEnabled, setTrafficEnabled] = useState<boolean>(true);
 
   useEffect(() => {
@@ -107,8 +112,8 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
           {
             featureType: 'road',
             elementType: 'labels.text.fill',
-            stylers: [{color: '#9ca5b3'}]
-          },
+            stylers: [{color: '#9ca5b3'}]}
+          ,
           {
             featureType: 'road.highway',
             elementType: 'geometry',
@@ -153,11 +158,10 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
       });
 
       // Check if location is GPS coordinates (lat,lng format) or special case
-      const coordPattern = /^-?\d+\.?\d*,-?\d+\.?\d*$/;
+      const coordPattern = /^-?\\d+\\.?\\d*,-?\\d+\\.?\\d*$/;
       if ('${location}' === 'current-location-unavailable') {
-        // Handle case where current location is not available
         map.setCenter({ lat: 0, lng: 0 });
-        map.setZoom(2); // World view
+        map.setZoom(2);
         const infoWindow = new google.maps.InfoWindow({
           content: '<div style="color: #333; padding: 10px;"><strong>Current Location Unavailable</strong><br>Please enable location services or try again.</div>',
           position: { lat: 0, lng: 0 }
@@ -167,13 +171,15 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
         const [lat, lng] = '${location}'.split(',').map(Number);
         const position = { lat, lng };
         map.setCenter(position);
-        map.setZoom(16); // Higher zoom for precise location
-        const marker = new google.maps.Marker({
-          position: position,
-          map: map,
+        map.setZoom(16);
+        new google.maps.Marker({
+          position,
+          map,
           title: 'Your Current Location',
           icon: {
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(\`
+            url:
+              'data:image/svg+xml;charset=UTF-8,' +
+              encodeURIComponent(\`
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="#ffffff" stroke-width="2"/>
                 <circle cx="12" cy="12" r="3" fill="#ffffff"/>
@@ -184,53 +190,53 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
           }
         });
       } else {
-        // Use geocoding for address-based locations
         const geocoder = new google.maps.Geocoder();
         geocoder.geocode({ address: '${location}' }, (results, status) => {
           if (status === 'OK' && results[0]) {
             map.setCenter(results[0].geometry.location);
-            const marker = new google.maps.Marker({
+            new google.maps.Marker({
               position: results[0].geometry.location,
-              map: map,
+              map,
               title: '${location}'
             });
           }
         });
       }
 
-      // Refresh traffic data every 2 minutes
       setInterval(function() {
         if (trafficLayer) {
           trafficLayer.setMap(null);
           trafficLayer = new google.maps.TrafficLayer();
           trafficLayer.setMap(map);
         }
-      }, 120000); // 2 minutes
+      }, 120000);
     }
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'demo-key'}&callback=initMap&libraries=geometry"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=${
+    process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'demo-key'
+  }&callback=initMap&libraries=geometry"></script>
 </body>
 </html>`;
 
         const mapUrl = `data:text/html;charset=utf-8,${encodeURIComponent(mapHtml)}`;
 
         setMapData({
-          location: location,
-          mapUrl: mapUrl,
+          location,
+          mapUrl,
           lastUpdated: new Date().toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: 'numeric',
-            hour12: true
-          })
+            hour12: true,
+          }),
         });
       } catch (err) {
         console.error('Failed to load map data:', err);
         setError('Failed to load map data. Please try again.');
 
         setMapData({
-          location: location,
+          location,
           mapUrl: '',
-          lastUpdated: new Date().toLocaleTimeString()
+          lastUpdated: new Date().toLocaleTimeString(),
         });
       } finally {
         setLoading(false);
@@ -239,16 +245,14 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
 
     loadMapData();
 
-    // Set up auto-refresh for traffic data every 2 minutes
     const refreshInterval = setInterval(() => {
       if (mapData && !loading) {
         loadMapData();
       }
-    }, 120000); // 2 minutes
+    }, 120000);
 
-    return () => {
-      clearInterval(refreshInterval);
-    };
+    return () => clearInterval(refreshInterval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
   if (isHidden) return null;
@@ -290,7 +294,9 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
           <div className="map-title">
             <h2>Map</h2>
             <div className="map-location">
-              {/^-?\d+\.?\d*,-?\d+\.?\d*$/.test(mapData.location) ? 'Your Current Location' : mapData.location}
+              {/^-?\d+\.?\d*,-?\d+\.?\d*$/.test(mapData.location)
+                ? 'Your Current Location'
+                : mapData.location}
               <span className="last-updated">Updated: {mapData.lastUpdated}</span>
             </div>
           </div>
@@ -305,13 +311,23 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
                 className="map-iframe"
                 allowFullScreen
                 loading="lazy"
-                title={`Map for ${/^-?\d+\.?\d*,-?\d+\.?\d*$/.test(mapData.location) ? 'Your Current Location' : mapData.location}`}
+                title={`Map for ${
+                  /^-?\d+\.?\d*,-?\d+\.?\d*$/.test(mapData.location)
+                    ? 'Your Current Location'
+                    : mapData.location
+                }`}
               />
             </div>
           ) : (
             <div className="map-fallback">
               <div className="map-icon">🗺️</div>
-              <p>Map for {/^-?\d+\.?\d*,-?\d+\.?\d*$/.test(mapData.location) ? 'your current location' : mapData.location} is currently unavailable</p>
+              <p>
+                Map for{' '}
+                {/^-?\d+\.?\d*,-?\d+\.?\d*$/.test(mapData.location)
+                  ? 'your current location'
+                  : mapData.location}{' '}
+                is currently unavailable
+              </p>
             </div>
           )}
         </div>
