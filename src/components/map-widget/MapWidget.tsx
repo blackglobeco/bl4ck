@@ -152,7 +152,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
       });
 
       // Check if location is GPS coordinates (lat,lng format) or special case
-      const coordPattern = /^-?\d+.?\d*,-?\d+.?\d*$/;
+      const coordPattern = /^-?\\d+.?\\d*,-?\\d+.?\\d*$/;
       if ('${location}' === 'current-location-unavailable') {
         // Handle case where current location is not available
         map.setCenter({ lat: 0, lng: 0 });
