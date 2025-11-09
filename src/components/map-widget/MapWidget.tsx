@@ -289,7 +289,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
           <div className="map-title">
             <h2>Map</h2>
             <div className="map-location">
-              {/^-?\d+\.?\d*,-?\d+\.?\d*$/.test(mapData.location) ? 'Your Current Location' : mapData.location}
+              {/^-?\d+.?\d*,-?\d+.?\d*$/.test(mapData.location) ? 'Your Current Location' : mapData.location}
               <span className="last-updated">Updated: {mapData.lastUpdated}</span>
             </div>
           </div>
@@ -304,13 +304,13 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
                 className="map-iframe"
                 allowFullScreen
                 loading="lazy"
-                title={`Map for ${/^-?\d+\.?\d*,-?\d+\.?\d*$/.test(mapData.location) ? 'Your Current Location' : mapData.location}`}
+                title={`Map for ${/^-?\d+.?\d*,-?\d+.?\d*$/.test(mapData.location) ? 'Your Current Location' : mapData.location}`}
               />
             </div>
           ) : (
             <div className="map-fallback">
               <div className="map-icon">🗺️</div>
-              <p>Map for {/^-?\d+\.?\d*,-?\d+\.?\d*$/.test(mapData.location) ? 'your current location' : mapData.location} is currently unavailable</p>
+              <p>Map for {/^-?\d+.?\d*,-?\d+.?\d*$/.test(mapData.location) ? 'your current location' : mapData.location} is currently unavailable</p>
             </div>
           )}
         </div>
