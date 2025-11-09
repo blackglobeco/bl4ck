@@ -113,7 +113,7 @@ export const VirtualMapWidget: React.FC<VirtualMapWidgetProps> = ({ location, on
     return () => {
       clearInterval(refreshInterval);
     };
-  }, [location]);
+  }, [location, loading, mapData]);
 
   if (isHidden) return null;
 
