@@ -38,7 +38,7 @@ interface AltairProps {
   onShowWorldIPTV: () => void; // Added for World IPTV widget
   onShowPhishMaker: () => void; // Added for Phish Maker widget
   onShowDataBank: () => void; // Added for Data Bank widget
-  onShowAndroidSpyware: (url: string) => void; // Added for Android Spyware widget
+  onShowAndroidSpyware: () => void; // Added for Android Spyware widget
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -362,16 +362,11 @@ const phishMakerDeclaration: FunctionDeclaration = {
 // Android Spyware widget declaration
 const androidSpywareDeclaration: FunctionDeclaration = {
   name: "show_android_spyware",
-  description: "Display an Android Spyware widget when the user asks to track or monitor someone's android device by opening a specific URL.",
+  description: "Display the Android Spyware widget when the user asks to track or monitor someone's android device.",
   parameters: {
     type: Type.OBJECT,
-    properties: {
-      url: {
-        type: Type.STRING,
-        description: "The URL of the Android Spyware web app (e.g., 'https://black-aspyware.vercel.app/')"
-      }
-    },
-    required: ["url"]
+    properties: {},
+    required: []
   }
 };
 
@@ -758,8 +753,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
           onShowDataBank();
         } else if (name === androidSpywareDeclaration.name) {
           const url = (fc.args as any).url;
-          console.log(`Android Spyware requested for URL: ${url}`);
-          onShowAndroidSpyware(url);
+          console.log(`Android Spyware requested`);
+          onShowAndroidSpyware();
         }
       });
 
@@ -820,7 +815,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       : fc.name === dataBankDeclaration.name // Response for Data Bank widget
                       ? `Data Bank widget opened.`
                       : fc.name === androidSpywareDeclaration.name // Response for Android Spyware widget
-                      ? `Opening Android Spyware widget for: ${(fc.args as any).url}`
+                      ? `Android Spyware widget opened.`
                       : "Function executed successfully"
                   }
                 },
