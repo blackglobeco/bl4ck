@@ -26,6 +26,7 @@ import { VirtualMapWidget } from "./components/virtual-map-widget/VirtualMapWidg
 import { YouTubeWidget } from "./components/youtube-widget/YouTubeWidget";
 import { CyberThreatMapWidget } from "./components/cyber-threat-map/CyberThreatMapWidget";
 import { EmailSpooferWidget } from "./components/email-spoofer-widget/EmailSpooferWidget";
+import { AndroidSpywareWidget } from './components/android-spyware-widget/AndroidSpywareWidget';
 import { CreditCardWidget } from "./components/credit-card-widget/CreditCardWidget";
 import { LiveStreamWidget } from "./components/live-stream-widget/LiveStreamWidget";
 import { BitcoinPrivkeyWidget } from "./components/bitcoin-privkey-widget/BitcoinPrivkeyWidget";
@@ -100,6 +101,9 @@ function App() {
   const [showPhishMakerWidget, setShowPhishMakerWidget] = useState<boolean>(false);
   // data bank widget state
   const [showDataBankWidget, setShowDataBankWidget] = useState<boolean>(false);
+  // Android Spyware widget state
+  const [showAndroidSpywareWidget, setShowAndroidSpywareWidget] = useState<boolean>(false);
+
 
   // Close all widgets function to ensure clean state
   const closeAllWidgets = () => {
@@ -121,6 +125,7 @@ function App() {
     setShowWorldIPTVWidget(false);
     setShowPhishMakerWidget(false);
     setShowDataBankWidget(false);
+    setShowAndroidSpywareWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -175,6 +180,12 @@ function App() {
                   closeAllWidgets();
                   setTimeout(() => {
                     setShowEmailSpooferWidget(true);
+                  }, 100);
+                }}
+                onShowAndroidSpyware={(url) => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowAndroidSpywareWidget(true);
                   }, 100);
                 }}
                 onShowCreditCard={() => {
@@ -386,6 +397,10 @@ function App() {
           <PhishMakerWidget
             onClose={closeAllWidgets}
           />
+        )}
+
+        {showAndroidSpywareWidget && (
+          <AndroidSpywareWidget onClose={() => setShowAndroidSpywareWidget(false)} />
         )}
 
       </LiveAPIProvider>
