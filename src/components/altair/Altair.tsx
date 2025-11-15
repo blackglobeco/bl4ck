@@ -209,7 +209,7 @@ const webCheckDeclaration: FunctionDeclaration = {
 
 const liveStreamDeclaration: FunctionDeclaration = {
   name: "show_live_stream_player",
-  description: "Display a live stream player for news, IPTV, CCTV, webcam, or IP camera streams when user asks to open or access live streams",
+  description: "Display a live stream player for CCTV, Webcam, or IP camera streams when user asks to open or access live streams",
   parameters: {
     type: Type.OBJECT,
     properties: {},
@@ -790,7 +790,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       : fc.name === liveStreamDeclaration.name
                       ? `Live Stream Player widget opened.`
                       : fc.name === "show_bitcoin_privkey_widget"
-                      ? `Opening Bitcoin Private Key database...`
+                      ? `Bitcoin Private Key database widget opened.`
                       : fc.name === currentLocationVirtualMapDeclaration.name
                       ? `Displaying your current location on the 3D virtual map.`
                       : fc.name === socialActivityTrackerDeclaration.name
