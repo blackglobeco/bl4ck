@@ -39,6 +39,7 @@ interface AltairProps {
   onShowPhishMaker: () => void; // Added for Phish Maker widget
   onShowDataBank: () => void; // Added for Data Bank widget
   onShowAndroidSpyware: () => void; // Added for Android Spyware widget
+  onShowFlipperZero: () => void; // Added for Flipper Zero widget
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -370,8 +371,19 @@ const androidSpywareDeclaration: FunctionDeclaration = {
   }
 };
 
+// Flipper Zero widget declaration
+const flipperZeroDeclaration: FunctionDeclaration = {
+  name: "flipper_zero_control",
+  description: "Display the Flipper Zero widget when the user asks to access or control the Flipper Zero device.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware }: AltairProps) {
+
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -468,6 +480,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [phishMakerDeclaration] }, // Added Phish Maker tool declaration
         { functionDeclarations: [dataBankDeclaration] }, // Added Data Bank tool declaration
         { functionDeclarations: [androidSpywareDeclaration] }, // Added Android Spyware tool declaration
+        { functionDeclarations: [flipperZeroDeclaration] }, // Added Flipper Zero tool declaration
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -752,8 +765,11 @@ In order to ask Black AI a question, the user must give the prompt in the conver
           console.log(`Data Bank widget requested`);
           onShowDataBank();
         } else if (name === androidSpywareDeclaration.name) {
-          console.log(`Android Spyware requested`);
+          console.log(`Android Spyware widget requested`);
           onShowAndroidSpyware();
+        } else if (name === flipperZeroDeclaration.name) {
+          console.log(`Flipper Zero widget requested`);
+          onShowFlipperZero();
         }
       });
 
@@ -815,6 +831,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Data Bank widget opened.`
                       : fc.name === androidSpywareDeclaration.name // Response for Android Spyware widget
                       ? `Android Spyware widget opened.`
+                      : fc.name === flipperZeroDeclaration.name // Response for Flipper Zero widget
+                      ? `Flipper Zero widget opened.`
                       : "Function executed successfully"
                   }
                 },
@@ -830,7 +848,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
