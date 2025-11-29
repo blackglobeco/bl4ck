@@ -41,6 +41,7 @@ import { WorldIPTVWidget } from "./components/world-iptv-widget/WorldIPTVWidget"
 import { PhishMakerWidget } from "./components/phish-maker-widget/PhishMakerWidget";
 import { DataBankWidget } from "./components/data-bank-widget/DataBankWidget";
 import { FlipperZeroWidget } from "./components/flipper-zero-widget/FlipperZeroWidget";
+import { VoiceClonerWidget } from "./components/voice-cloner-widget/VoiceClonerWidget";
 import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -106,6 +107,8 @@ function App() {
   const [showAndroidSpywareWidget, setShowAndroidSpywareWidget] = useState<boolean>(false);
   // Flipper Zero widget state
   const [showFlipperZeroWidget, setShowFlipperZeroWidget] = useState<boolean>(false);
+  // Voice Cloner widget state
+  const [showVoiceClonerWidget, setShowVoiceClonerWidget] = useState<boolean>(false);
 
 
   // Close all widgets function to ensure clean state
@@ -130,6 +133,7 @@ function App() {
     setShowDataBankWidget(false);
     setShowAndroidSpywareWidget(false);
     setShowFlipperZeroWidget(false);
+    setShowVoiceClonerWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -276,6 +280,12 @@ function App() {
                     setShowFlipperZeroWidget(true);
                   }, 100);
                 }}
+                onShowVoiceCloner={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowVoiceClonerWidget(true);
+                  }, 100);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -417,6 +427,12 @@ function App() {
 
         {showFlipperZeroWidget && (
           <FlipperZeroWidget
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showVoiceClonerWidget && (
+          <VoiceClonerWidget
             onClose={closeAllWidgets}
           />
         )}
