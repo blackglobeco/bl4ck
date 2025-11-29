@@ -13,7 +13,7 @@ export const VoiceClonerWidget: React.FC<VoiceClonerWidgetProps> = ({ onClose })
         <div className="voice-cloner-content">
           <div className="voice-cloner-container">
             <iframe
-              src="https://resembleai-chatterbox-multilingual-tts.hf.space/"
+              src="https://sungo-ganpare-chatterbox.hf.space/"
               className="voice-cloner-iframe"
               title="Voice Cloner Tool"
               allowFullScreen
