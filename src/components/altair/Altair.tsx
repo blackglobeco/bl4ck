@@ -41,6 +41,7 @@ interface AltairProps {
   onShowAndroidSpyware: () => void; // Added for Android Spyware widget
   onShowFlipperZero: () => void; // Added for Flipper Zero widget
   onShowVoiceCloner: () => void; // Added for Voice Cloner widget
+  onShowMS365Hijacker: () => void; // Added for MS365 Hijacker widget
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -394,8 +395,19 @@ const voiceClonerDeclaration: FunctionDeclaration = {
   }
 };
 
+// MS365 Hijacker widget declaration
+const ms365HijackerDeclaration: FunctionDeclaration = {
+  name: "show_ms365_hijacker",
+  description: "Display the Microsoft 365 Hijacker widget when the user asks to hack, hijack, or access Microsoft 365 accounts.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero, onShowVoiceCloner }: AltairProps) {
+
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero, onShowVoiceCloner, onShowMS365Hijacker }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -494,6 +506,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [androidSpywareDeclaration] }, // Added Android Spyware tool declaration
         { functionDeclarations: [flipperZeroDeclaration] }, // Added Flipper Zero tool declaration
         { functionDeclarations: [voiceClonerDeclaration] }, // Added Voice Cloner tool declaration
+        { functionDeclarations: [ms365HijackerDeclaration] }, // Added MS365 Hijacker tool declaration
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -786,6 +799,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === voiceClonerDeclaration.name) {
           console.log(`Voice Cloner widget requested`);
           onShowVoiceCloner();
+        } else if (name === ms365HijackerDeclaration.name) {
+          console.log(`MS365 Hijacker widget requested`);
+          onShowMS365Hijacker();
         }
       });
 
@@ -851,6 +867,8 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Flipper Zero widget opened.`
                       : fc.name === voiceClonerDeclaration.name // Response for Voice Cloner widget
                       ? `Voice Cloner widget opened.`
+                      : fc.name === ms365HijackerDeclaration.name // Response for MS365 Hijacker widget
+                      ? `Microsoft 365 Hijacker widget opened.`
                       : "Function executed successfully"
                   }
                 },
@@ -866,7 +884,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero, onShowVoiceCloner, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero, onShowVoiceCloner, onShowMS365Hijacker, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
