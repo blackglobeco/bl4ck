@@ -145,6 +145,27 @@ function App() {
   // Handle unlock
   const handleUnlock = () => {
     setIsLocked(false);
+    
+    // Set up cleanup for when user leaves or closes tab
+    const handleBeforeUnload = () => {
+      const activePasscode = sessionStorage.getItem('activePasscode');
+      if (activePasscode) {
+        // Release the passcode session
+        try {
+          const sessions = JSON.parse(localStorage.getItem('activeSessions') || '{}');
+          const sessionId = sessions[activePasscode];
+          
+          if (sessionId) {
+            delete sessions[activePasscode];
+            localStorage.setItem('activeSessions', JSON.stringify(sessions));
+          }
+        } catch (error) {
+          console.error('Error releasing passcode:', error);
+        }
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
   };
 
   // Show lockscreen if locked
