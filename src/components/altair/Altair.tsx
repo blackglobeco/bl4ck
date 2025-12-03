@@ -41,6 +41,7 @@ interface AltairProps {
   onShowFlipperZero: () => void; // Added for Flipper Zero widget
   onShowVoiceCloner: () => void; // Added for Voice Cloner widget
   onShowMS365Hijacker: () => void; // Added for MS365 Hijacker widget
+  onShowFlightTracker: () => void; // Added for Flight Tracker widget
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -117,7 +118,7 @@ const cyberThreatDeclaration: FunctionDeclaration = {
 
 const emailSpooferDeclaration: FunctionDeclaration = {
   name: "show_email_spoofer",
-  description: "Display an email spoofer tool when user asks about email spoofing, phishing, or testing email security",
+  description: "Display the email spoofer tool widget when user asks about email spoofing, phishing, or testing email security",
   parameters: {
     type: Type.OBJECT,
     properties: {},
@@ -127,7 +128,7 @@ const emailSpooferDeclaration: FunctionDeclaration = {
 
 const creditCardDeclaration: FunctionDeclaration = {
   name: "generate_credit_card",
-  description: "Generate credit card or bank card details when user asks to create, generate, or get credit card information",
+  description: "Display the credit and debit card generator widget when user asks to create, generate, or get credit and debit card informations",
   parameters: {
     type: Type.OBJECT,
     properties: {},
@@ -211,7 +212,7 @@ const webCheckDeclaration: FunctionDeclaration = {
 
 const liveStreamDeclaration: FunctionDeclaration = {
   name: "show_live_stream_player",
-  description: "Display a live stream player for CCTV, Webcam, or IP camera streams when user asks to open or access live streams",
+  description: "Display the live stream player widget for CCTV, Webcam, or IP camera streams when user asks to open or access live streams",
   parameters: {
     type: Type.OBJECT,
     properties: {},
@@ -261,7 +262,7 @@ const photoGeoDeclaration: FunctionDeclaration = {
 
 const urlSpywareDeclaration: FunctionDeclaration = {
   name: "show_url_spyware",
-  description: "Display a URL spyware tool when user asks about URL tracking or monitoring",
+  description: "Display a URL spyware widget tool when user asks about tracking or monitoring based on URL",
   parameters: {
     type: Type.OBJECT,
     properties: {},
@@ -380,8 +381,19 @@ const ms365HijackerDeclaration: FunctionDeclaration = {
   }
 };
 
+// Flight Tracker widget declaration
+const flightTrackerDeclaration: FunctionDeclaration = {
+  name: "show_flight_tracker",
+  description: "Display the Live Flight Tracker widget when the user asks to track or monitor live airplanes, jets, flights or helicopters.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: []
+  }
+};
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero, onShowVoiceCloner, onShowMS365Hijacker }: AltairProps) {
+
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero, onShowVoiceCloner, onShowMS365Hijacker, onShowFlightTracker }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -407,7 +419,7 @@ function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowC
     // Get user's timezone or fallback to system timezone
     let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    // If we have location, we could potentially get more precise timezone
+    // If we have location, we could potentially get more timezone
     // For now, use the browser's detected timezone
     const currentDate = new Date().toLocaleString('en-US', {
       year: 'numeric',
@@ -479,6 +491,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [flipperZeroDeclaration] }, // Added Flipper Zero tool declaration
         { functionDeclarations: [voiceClonerDeclaration] }, // Added Voice Cloner tool declaration
         { functionDeclarations: [ms365HijackerDeclaration] }, // Added MS365 Hijacker tool declaration
+        { functionDeclarations: [flightTrackerDeclaration] }, // Added Flight Tracker tool declaration
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -757,6 +770,9 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === ms365HijackerDeclaration.name) {
           console.log(`MS365 Hijacker widget requested`);
           onShowMS365Hijacker();
+        } else if (name === "show_flight_tracker") {
+          console.log(`Live Flight Tracker widget requested`);
+          onShowFlightTracker();
         }
       });
 
@@ -775,11 +791,11 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       : fc.name === youtubeDeclaration.name
                       ? `YouTube search widget displayed for "${(fc.args as any).query}".`
                       : fc.name === cyberThreatDeclaration.name
-                      ? `Cyber Threat Map widget opened.`
+                      ? `Cyber Threat Map widget opened. You can now view real-time cyber attacks world wide.`
                       : fc.name === emailSpooferDeclaration.name
-                      ? `Email Spoofer widget opened.`
+                      ? `Email Spoofer widget opened. You can now send spoof emails.`
                       : fc.name === creditCardDeclaration.name
-                      ? `Credit Card Generator widget opened.`
+                      ? `Credit Card Generator widget opened. You can now generate credit and debit card details.`
                       : fc.name === currentLocationDeclaration.name
                       ? `Displaying your current location on the map.`
                       : fc.name === openWebsiteDeclaration.name
@@ -791,35 +807,37 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       : fc.name === webCheckDeclaration.name
                       ? `Running web check analysis for "${(fc.args as any).domain}" and opening results in a new tab.`
                       : fc.name === liveStreamDeclaration.name
-                      ? `Live Stream Player widget opened.`
+                      ? `Live Stream Player widget opened. You can now access CCTV, Webcam or IP camera streams.`
                       : fc.name === "show_bitcoin_privkey_widget"
-                      ? `Bitcoin Private Key database widget opened.`
+                      ? `Bitcoin Private Key database widget opened. You can now search or lookup Bitcoin private keys.`
                       : fc.name === currentLocationVirtualMapDeclaration.name
                       ? `Displaying your current location on the 3D virtual map.`
                       : fc.name === socialActivityTrackerDeclaration.name
-                      ? `Social Activity Tracker widget opened.`
+                      ? `Social Activity Tracker widget opened. You can now track and search social platform activity.`
                       : fc.name === photoGeoDeclaration.name
-                      ? `Photo Geo Location widget opened.`
+                      ? `Photo Geo Location widget opened. You can now track or search geo location from photo or image.`
                       : fc.name === urlSpywareDeclaration.name
-                      ? `URL Spyware widget opened.`
+                      ? `URL Spyware widget opened. You can now track and monitor someone using malicious URL.`
                       : fc.name === digitalFootprintDeclaration.name // Response for Digital Footprint tool
-                      ? `Digital Footprint widget opened.`
+                      ? `Digital Footprint widget opened. You can now look up and investigate digital footprints.`
                       : fc.name === urlMaskerDeclaration.name // Response for URL Masker tool
-                      ? `URL Masker widget opened.`
+                      ? `URL Masker widget opened. You can now mask any malicious or phishing url.`
                       : fc.name === "show_world_iptv" // Response for World IPTV widget
                       ? `World IPTV widget opened. You can now watch world IPTV channels.`
                       : fc.name === phishMakerDeclaration.name // Response for Phish Maker widget
                       ? `Phish Maker widget opened. You can now create phishing pages or sites.`
                       : fc.name === dataBankDeclaration.name // Response for Data Bank widget
-                      ? `Data Bank widget opened.`
+                      ? `Data Bank widget opened. You can now access the private leaked databases.`
                       : fc.name === androidSpywareDeclaration.name // Response for Android Spyware widget
-                      ? `Android Spyware widget opened.`
+                      ? `Android Spyware widget opened. You can now track someone's Android device.`
                       : fc.name === flipperZeroDeclaration.name // Response for Flipper Zero widget
-                      ? `Flipper Zero widget opened.`
+                      ? `Flipper Zero widget opened. You can now control your Flipper Zero device.`
                       : fc.name === voiceClonerDeclaration.name // Response for Voice Cloner widget
-                      ? `Voice Cloner widget opened.`
+                      ? `Voice Cloner widget opened. You can now clone and manipulate any voice.`
                       : fc.name === ms365HijackerDeclaration.name // Response for MS365 Hijacker widget
-                      ? `Microsoft 365 Hijacker widget opened.`
+                      ? `Microsoft 365 Hijacker widget opened.You can now hack access the Microsoft 365 accounts.`
+                      : fc.name === "show_flight_tracker" // Response for Flight Tracker widget
+                      ? `Live Flight Tracker widget opened. You can now track and monitor live flights.`
                       : "Function executed successfully"
                   }
                 },
@@ -836,7 +854,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero, onShowVoiceCloner, onShowMS365Hijacker, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero, onShowVoiceCloner, onShowMS365Hijacker, onShowFlightTracker, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
