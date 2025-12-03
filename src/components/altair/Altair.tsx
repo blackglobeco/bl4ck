@@ -31,7 +31,6 @@ interface AltairProps {
   onShowSocialActivityTracker: () => void;
   onShowPhotoGeo: () => void;
   onShowURLSpyware: () => void;
-  onShowSpiderFoot: () => void; // Added for SpiderFoot widget
   onShowDigitalFootprint: () => void; // Added for Digital Footprint widget
   onShowSubdomainFinder: () => void; // Added for Subdomain Finder widget
   onShowURLMasker: () => void; // Added for URL Masker widget
@@ -270,31 +269,6 @@ const urlSpywareDeclaration: FunctionDeclaration = {
   }
 };
 
-const backgroundCheckDeclaration: FunctionDeclaration = {
-  name: "run_background_check",
-  description: "Run a background check on a person by opening CyberBackgroundChecks in a new tab",
-  parameters: {
-    type: Type.OBJECT,
-    properties: {
-      name: {
-        type: Type.STRING,
-        description: "The full name of the person to run a background check on (e.g., 'Ivan Martinez', 'John Smith')"
-      }
-    },
-    required: ["name"]
-  }
-};
-
-// SpiderFoot OSINT tool declaration
-const spiderfootOsintDeclaration: FunctionDeclaration = {
-  name: "spiderfoot_osint",
-  description: "Display the SpiderFoot OSINT automation tool. Use this when the user wants to run OSINT (Open Source Intelligence) automation, perform reconnaissance, gather intelligence, or conduct automated security investigations.",
-  parameters: {
-    type: Type.OBJECT,
-    properties: {},
-    required: []
-  }
-};
 
 // Digital Footprint widget declaration
 const digitalFootprintDeclaration: FunctionDeclaration = {
@@ -407,7 +381,7 @@ const ms365HijackerDeclaration: FunctionDeclaration = {
 };
 
 
-function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero, onShowVoiceCloner, onShowMS365Hijacker }: AltairProps) {
+function AltairComponent({ onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero, onShowVoiceCloner, onShowMS365Hijacker }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -495,8 +469,6 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         { functionDeclarations: [socialActivityTrackerDeclaration] },
         { functionDeclarations: [photoGeoDeclaration] },
         { functionDeclarations: [urlSpywareDeclaration] },
-        { functionDeclarations: [backgroundCheckDeclaration] },
-        { functionDeclarations: [spiderfootOsintDeclaration] }, // Added SpiderFoot OSINT tool declaration
         { functionDeclarations: [digitalFootprintDeclaration] }, // Added Digital Footprint tool declaration
         { functionDeclarations: [subdomainFinderDeclaration] }, // Added Subdomain Finder tool declaration
         { functionDeclarations: [urlMaskerDeclaration] }, // Added URL Masker tool declaration
@@ -755,23 +727,6 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         } else if (name === urlSpywareDeclaration.name) {
           console.log(`URL Spyware requested`);
           onShowURLSpyware();
-        } else if (name === backgroundCheckDeclaration.name) {
-          const personName = (fc.args as any).name;
-          console.log(`Background check requested for: ${personName}`);
-
-          // Convert name to URL-friendly format (lowercase, replace spaces with hyphens)
-          const urlFriendlyName = personName.toLowerCase().replace(/\s+/g, '-');
-          const backgroundCheckUrl = `https://www.cyberbackgroundchecks.com/people/${urlFriendlyName}`;
-
-          try {
-            window.open(backgroundCheckUrl, '_blank', 'noopener,noreferrer');
-            console.log(`Successfully opened background check for "${personName}"`);
-          } catch (error) {
-            console.error(`Failed to open background check for "${personName}"`, error);
-          }
-        } else if (name === spiderfootOsintDeclaration.name) {
-            console.log(`SpiderFoot OSINT widget requested`);
-            onShowSpiderFoot();
         } else if (fc.name === digitalFootprintDeclaration.name) {
           console.log(`Digital Footprint widget requested`);
           onShowDigitalFootprint();
@@ -847,10 +802,6 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       ? `Photo Geo Location widget opened.`
                       : fc.name === urlSpywareDeclaration.name
                       ? `URL Spyware widget opened.`
-                      : fc.name === backgroundCheckDeclaration.name
-                      ? `Opening background check for "${(fc.args as any).name}" in a new tab.`
-                      : fc.name === spiderfootOsintDeclaration.name // Response for SpiderFoot OSINT tool
-                      ? `SpiderFoot OSINT tool widget opened.`
                       : fc.name === digitalFootprintDeclaration.name // Response for Digital Footprint tool
                       ? `Digital Footprint widget opened.`
                       : fc.name === urlMaskerDeclaration.name // Response for URL Masker tool
@@ -880,11 +831,12 @@ In order to ask Black AI a question, the user must give the prompt in the conver
         );
       }
     };
+    client.off("toolcall", onToolCall);
     client.on("toolcall", onToolCall);
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowSpiderFoot, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero, onShowVoiceCloner, onShowMS365Hijacker, location]);
+  }, [client, onShowMap, onShowVirtualMap, onSearchYouTube, onShowCyberThreatMap, onShowEmailSpoofer, onShowCreditCard, onShowLiveStream, onShowBitcoinPrivkey, onShowSocialActivityTracker, onShowPhotoGeo, onShowURLSpyware, onShowDigitalFootprint, onShowSubdomainFinder, onShowURLMasker, onShowWorldIPTV, onShowPhishMaker, onShowDataBank, onShowAndroidSpyware, onShowFlipperZero, onShowVoiceCloner, onShowMS365Hijacker, location]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
