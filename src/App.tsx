@@ -33,7 +33,6 @@ import { BitcoinPrivkeyWidget } from "./components/bitcoin-privkey-widget/Bitcoi
 import { SocialActivityTrackerWidget } from "./components/social-activity-tracker-widget/SocialActivityTrackerWidget";
 import { PhotoGeoWidget } from "./components/photo-geo-widget/PhotoGeoWidget";
 import { URLSpywareWidget } from "./components/url-spyware-widget/URLSpywareWidget";
-import { SpiderFootWidget } from "./components/spiderfoot-widget/SpiderFootWidget";
 import { DigitalFootprintWidget } from "./components/digital-footprint-widget/DigitalFootprintWidget";
 import { SubdomainFinderWidget } from "./components/subdomain-finder-widget/SubdomainFinderWidget";
 import { URLMaskerWidget } from "./components/url-masker-widget/URLMaskerWidget";
@@ -90,8 +89,6 @@ function App() {
   const [showPhotoGeoWidget, setShowPhotoGeoWidget] = useState<boolean>(false);
   // url spyware widget state
   const [showURLSpywareWidget, setShowURLSpywareWidget] = useState<boolean>(false);
-  // spiderfoot widget state
-  const [showSpiderFootWidget, setShowSpiderFootWidget] = useState<boolean>(false);
   // digital footprint widget state
   const [showDigitalFootprintWidget, setShowDigitalFootprintWidget] = useState<boolean>(false);
   // subdomain finder widget state
@@ -127,7 +124,6 @@ function App() {
     setShowSocialActivityTrackerWidget(false);
     setShowPhotoGeoWidget(false);
     setShowURLSpywareWidget(false);
-    setShowSpiderFootWidget(false);
     setShowDigitalFootprintWidget(false);
     setShowSubdomainFinderWidget(false);
     setShowURLMaskerWidget(false);
@@ -234,12 +230,6 @@ function App() {
                   closeAllWidgets();
                   setTimeout(() => {
                     setShowURLSpywareWidget(true);
-                  }, 100);
-                }}
-                onShowSpiderFoot={() => {
-                  closeAllWidgets();
-                  setTimeout(() => {
-                    setShowSpiderFootWidget(true);
                   }, 100);
                 }}
                 onShowDigitalFootprint={() => {
@@ -389,12 +379,6 @@ function App() {
 
         {showURLSpywareWidget && (
           <URLSpywareWidget
-            onClose={closeAllWidgets}
-          />
-        )}
-
-        {showSpiderFootWidget && (
-          <SpiderFootWidget
             onClose={closeAllWidgets}
           />
         )}
