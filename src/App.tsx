@@ -42,6 +42,7 @@ import { PhishMakerWidget } from "./components/phish-maker-widget/PhishMakerWidg
 import { DataBankWidget } from "./components/data-bank-widget/DataBankWidget";
 import { FlipperZeroWidget } from "./components/flipper-zero-widget/FlipperZeroWidget";
 import { VoiceClonerWidget } from "./components/voice-cloner-widget/VoiceClonerWidget";
+import { MS365HijackerWidget } from "./components/ms365-hijacker-widget/MS365HijackerWidget";
 import { Lockscreen } from "./components/lockscreen/Lockscreen";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -109,6 +110,8 @@ function App() {
   const [showFlipperZeroWidget, setShowFlipperZeroWidget] = useState<boolean>(false);
   // Voice Cloner widget state
   const [showVoiceClonerWidget, setShowVoiceClonerWidget] = useState<boolean>(false);
+  // MS365 Hijacker widget state
+  const [showMS365HijackerWidget, setShowMS365HijackerWidget] = useState<boolean>(false);
 
 
   // Close all widgets function to ensure clean state
@@ -134,6 +137,7 @@ function App() {
     setShowAndroidSpywareWidget(false);
     setShowFlipperZeroWidget(false);
     setShowVoiceClonerWidget(false);
+    setShowMS365HijackerWidget(false);
     setMapLocation('');
     setYouTubeQuery('');
   };
@@ -286,6 +290,12 @@ function App() {
                     setShowVoiceClonerWidget(true);
                   }, 100);
                 }}
+                onShowMS365Hijacker={() => {
+                  closeAllWidgets();
+                  setTimeout(() => {
+                    setShowMS365HijackerWidget(true);
+                  }, 100);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -433,6 +443,12 @@ function App() {
 
         {showVoiceClonerWidget && (
           <VoiceClonerWidget
+            onClose={closeAllWidgets}
+          />
+        )}
+
+        {showMS365HijackerWidget && (
+          <MS365HijackerWidget
             onClose={closeAllWidgets}
           />
         )}
