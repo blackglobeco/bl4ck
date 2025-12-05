@@ -384,7 +384,7 @@ const ms365HijackerDeclaration: FunctionDeclaration = {
 // Flight Tracker widget declaration
 const flightTrackerDeclaration: FunctionDeclaration = {
   name: "show_flight_tracker",
-  description: "Display the Live Flight Tracker widget when the user asks to track or monitor live airplanes, jets, flights or helicopters.",
+  description: "Display the Live Aircraft Tracker widget when the user asks to track or monitor live aircrafts and flights.",
   parameters: {
     type: Type.OBJECT,
     properties: {},
@@ -768,10 +768,10 @@ In order to ask Black AI a question, the user must give the prompt in the conver
           console.log(`Voice Cloner widget requested`);
           onShowVoiceCloner();
         } else if (name === ms365HijackerDeclaration.name) {
-          console.log(`MS365 Hijacker widget requested`);
+          console.log(`Microsoft 365 Hijacker widget requested`);
           onShowMS365Hijacker();
         } else if (name === "show_flight_tracker") {
-          console.log(`Live Flight Tracker widget requested`);
+          console.log(`Live Aircraft Tracker widget requested`);
           onShowFlightTracker();
         }
       });
@@ -837,7 +837,7 @@ In order to ask Black AI a question, the user must give the prompt in the conver
                       : fc.name === ms365HijackerDeclaration.name // Response for MS365 Hijacker widget
                       ? `Microsoft 365 Hijacker widget opened.You can now hack access the Microsoft 365 accounts.`
                       : fc.name === "show_flight_tracker" // Response for Flight Tracker widget
-                      ? `Live Flight Tracker widget opened. You can now track and monitor live flights.`
+                      ? `Live Aircraft Tracker widget opened. You can now track and monitor live aircrafts and flights.`
                       : "Function executed successfully"
                   }
                 },
