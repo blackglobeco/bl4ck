@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import './lockscreen.scss';
+import { VALID_PASSCODES } from '../../passcodes'; // Import passcodes from a TypeScript file
 
 interface LockscreenProps {
   onUnlock: () => void;
@@ -9,25 +9,14 @@ interface LockscreenProps {
 export const Lockscreen: React.FC<LockscreenProps> = ({ onUnlock }) => {
   const [passcode, setPasscode] = useState('');
   const [error, setError] = useState('');
-  const [validPasscodes, setValidPasscodes] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Passcodes are now directly imported, no need to fetch or manage loading state for them
+  const validPasscodes = VALID_PASSCODES;
+  const [loading] = useState(false); // Keep loading state for initial UI if needed, though passcodes are available immediately
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random()}`);
 
-  useEffect(() => {
-    // Load passcodes from the public directory
-    fetch('/Passcodes.txt')
-      .then(response => response.text())
-      .then(text => {
-        const codes = text.trim().split('\n').map(code => code.trim()).filter(code => code);
-        setValidPasscodes(codes);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error loading passcodes:', error);
-        setError('Failed to load passcode validation');
-        setLoading(false);
-      });
+  // Removed the useEffect hook that fetched passcodes from /Passcodes.txt
 
+  useEffect(() => {
     // Cleanup session on page unload
     const handleBeforeUnload = () => {
       const activePasscode = sessionStorage.getItem('activePasscode');
@@ -45,7 +34,7 @@ export const Lockscreen: React.FC<LockscreenProps> = ({ onUnlock }) => {
         if (activePasscode) {
           const sessions = getActiveSessions();
           const mySession = sessions[activePasscode];
-          
+
           // Check if our session was invalidated
           if (!mySession || mySession !== sessionId) {
             alert('Your session has been terminated because this passcode is being used elsewhere.');
@@ -87,7 +76,7 @@ export const Lockscreen: React.FC<LockscreenProps> = ({ onUnlock }) => {
   // Claim a passcode for this session
   const claimPasscode = (code: string): boolean => {
     const sessions = getActiveSessions();
-    
+
     // Check if already in use by another session
     if (sessions[code] && sessions[code] !== sessionId) {
       return false;
@@ -103,13 +92,13 @@ export const Lockscreen: React.FC<LockscreenProps> = ({ onUnlock }) => {
   // Release a passcode when logging out or closing
   const releasePasscode = (code: string) => {
     const sessions = getActiveSessions();
-    
+
     // Only release if this session owns it
     if (sessions[code] === sessionId) {
       delete sessions[code];
       setActiveSessions(sessions);
     }
-    
+
     sessionStorage.removeItem('activePasscode');
   };
 
@@ -141,26 +130,14 @@ export const Lockscreen: React.FC<LockscreenProps> = ({ onUnlock }) => {
     onUnlock();
   };
 
-  if (loading) {
-    return (
-      <div className="lockscreen-overlay">
-        <div className="lockscreen-container">
-          <div className="lockscreen-content">
-            <h1>BlackAI ⚛</h1>
-            <div className="loading-text">Initializing security...</div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  // Removed the loading state check as passcodes are available immediately
   return (
     <div className="lockscreen-overlay">
       <div className="lockscreen-container">
         <div className="lockscreen-content">
           <h1>BlackAI ⚛</h1>
           <p>Enter passcode to access the system</p>
-          
+
           <form onSubmit={handleSubmit} className="passcode-form">
             <input
               type="password"
@@ -174,7 +151,7 @@ export const Lockscreen: React.FC<LockscreenProps> = ({ onUnlock }) => {
               Access
             </button>
           </form>
-          
+
           {error && <div className="error-message">{error}</div>}
         </div>
       </div>
