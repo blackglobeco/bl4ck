@@ -16,7 +16,7 @@ export const FlightTrackerWidget: React.FC<FlightTrackerWidgetProps> = ({ onClos
             <iframe
               src="https://objectiveunclear.com/airloom"
               className="flight-tracker-iframe"
-              title="Flight Tracker Tool"
+              title="Live Aircraft Tracker Tool"
               allowFullScreen
             />
           </div>
