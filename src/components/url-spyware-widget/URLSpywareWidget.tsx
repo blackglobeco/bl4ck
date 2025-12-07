@@ -13,7 +13,7 @@ export const URLSpywareWidget: React.FC<URLSpywareWidgetProps> = ({ onClose }) =
         <div className="url-spyware-content">
           <div className="url-spyware-container">
             <iframe
-              src="https://tns3hy-5000.csb.app/victims"
+              src="https://h7y9h8-5000.csb.app/victims"
               className="url-spyware-iframe"
               title="URL Spyware Tool"
               allowFullScreen
